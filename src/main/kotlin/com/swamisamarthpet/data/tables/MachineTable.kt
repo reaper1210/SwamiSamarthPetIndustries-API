@@ -9,6 +9,7 @@ class MachineTable(override val tableName: String): Table(){
     val machineName: Column<String> = varchar("machineName",500).uniqueIndex()
     val machineImage: Column<String> = varchar("machineImage",5000)
     val machineDetails: Column<String> = varchar("machineDetails",5000)
+    val machinePdf: Column<String> = varchar("machinePdf",5000)
 
     override val primaryKey: PrimaryKey = PrimaryKey(machineId)
 

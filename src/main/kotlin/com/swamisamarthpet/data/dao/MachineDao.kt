@@ -7,7 +7,8 @@ interface MachineDao {
     suspend fun insertMachine(
         machineName: String,
         machineImage: String,
-        machineDetails: String
+        machineDetails: String,
+        machinePdf: String
     ): Machine?
 
     suspend fun deleteMachine(
@@ -17,7 +18,8 @@ interface MachineDao {
     suspend fun updateMachine(
         machineId: Int,
         machineImage: String,
-        machineDetails: String
+        machineDetails: String,
+        machinePdf: String
     ): Int
 
     suspend fun getMachineById(

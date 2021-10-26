@@ -21,19 +21,19 @@ fun Route.insertCategory() {
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
+
             try{
 
+                val result = CategoryRepo().insertCategory(categoryName,categoryImage)
                 val table = MachineTable(categoryName)
                 transaction {
                     SchemaUtils.create(table)
                 }
-
-                val result = CategoryRepo().insertCategory(categoryName,categoryImage)
                 call.respond(HttpStatusCode.OK,result!!)
 
-            }catch (e: ExposedSQLException){
+            } catch (e: ExposedSQLException){
                 call.respondText("duplicateName")
-            }catch (e:Throwable){
+            } catch (e:Throwable){
                 call.respondText(e.message.toString())
             }
         }

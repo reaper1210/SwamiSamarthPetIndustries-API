@@ -6,6 +6,7 @@ import com.swamisamarthpet.routes.categoryRoutes.getCategoryById
 import com.swamisamarthpet.routes.categoryRoutes.updateCategory
 import com.swamisamarthpet.routes.categoryRoutes.insertCategory
 import com.swamisamarthpet.routes.machineRoutes.*
+import com.swamisamarthpet.routes.partRoutes.*
 import io.ktor.routing.*
 import io.ktor.http.content.*
 import io.ktor.application.*
@@ -20,16 +21,22 @@ fun Application.configureRouting() {
         }
 
         insertCategory()
-        getAllCategories()
         deleteCategory()
-        getCategoryById()
         updateCategory()
+        getCategoryById()
+        getAllCategories()
 
         insertMachine()
         deleteMachine()
         updateMachine()
-        getAllMachines()
         getMachineById()
+        getAllMachines()
+
+        insertPart()
+        deletePart()
+        updatePart()
+        getPartById()
+        getAllParts()
 
         static("/static") {
             resources("static")

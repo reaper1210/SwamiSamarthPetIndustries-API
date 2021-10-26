@@ -11,13 +11,14 @@ class MachineRepo(tableName: String): MachineDao {
 
     private val machineTable = MachineTable(tableName)
 
-    override suspend fun insertMachine(machineName: String, machineImage: String, machineDetails: String): Machine? {
+    override suspend fun insertMachine(machineName: String, machineImage: String, machineDetails: String, machinePdf: String): Machine? {
         var statement: InsertStatement<Number>? = null
         DatabaseFactory.dbQuery {
             statement = machineTable.insert { machine ->
                 machine[machineTable.machineName] = machineName
                 machine[machineTable.machineImage] = machineImage
                 machine[machineTable.machineDetails] = machineDetails
+                machine[machineTable.machinePdf] = machinePdf
             }
         }
         return rowToMachine(statement?.resultedValues?.get(0))
@@ -28,13 +29,14 @@ class MachineRepo(tableName: String): MachineDao {
             machineTable.deleteWhere { machineTable.machineId.eq(machineId) }
         }
 
-    override suspend fun updateMachine(machineId: Int, machineImage: String, machineDetails: String): Int =
+    override suspend fun updateMachine(machineId: Int, machineImage: String, machineDetails: String, machinePdf: String): Int =
         DatabaseFactory.dbQuery {
             machineTable.update({
                 machineTable.machineId.eq(machineId)
             }){ statement ->
                 statement[machineTable.machineImage] = machineImage
                 statement[machineTable.machineDetails] = machineDetails
+                statement[machineTable.machinePdf] = machinePdf
             }
         }
 
@@ -47,13 +49,12 @@ class MachineRepo(tableName: String): MachineDao {
             }.singleOrNull()
         }
 
-
     override suspend fun getAllMachines(): List<Machine> =
         DatabaseFactory.dbQuery{
             machineTable.selectAll().mapNotNull {
                 rowToMachine(it)
+            }
         }
-    }
 
     private fun rowToMachine(row: ResultRow?): Machine? {
         if(row == null)
@@ -62,7 +63,8 @@ class MachineRepo(tableName: String): MachineDao {
             machineId = row[machineTable.machineId],
             machineName = row[machineTable.machineName],
             machineImage = row[machineTable.machineImage],
-            machineDetails = row[machineTable.machineDetails]
+            machineDetails = row[machineTable.machineDetails],
+            machinePdf = row[machineTable.machinePdf]
         )
     }
 

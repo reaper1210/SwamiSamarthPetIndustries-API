@@ -21,18 +21,18 @@ fun Route.insertMachine(){
         val machineName = parameters["machineName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Name")
         val machineImage = parameters["machineImage"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Image")
         val machineDetails = parameters["machineDetails"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Details")
+        val machinePdf = parameters["machinePdf"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Pdf")
         val categoryName = parameters["categoryName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Category Name")
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
             try{
 
+                val result = MachineRepo(categoryName).insertMachine(machineName,machineImage,machineDetails,machinePdf)
                 val table = PartTable(machineName)
                 transaction{
                     SchemaUtils.create(table)
                 }
-
-                val result = MachineRepo(categoryName).insertMachine(machineName,machineImage,machineDetails)
                 call.respond(HttpStatusCode.OK,result!!)
 
             }catch (e: ExposedSQLException){

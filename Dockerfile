@@ -7,7 +7,7 @@ RUN apt-get update
 RUN apt-get install -y dos2unix
 RUN dos2unix gradlew
 
-RUN bash gradlew fatJar
+RUN bash gradlew shadowJar
 
 WORKDIR /run
 RUN cp /src/build/libs/*.jar /run/server.jar

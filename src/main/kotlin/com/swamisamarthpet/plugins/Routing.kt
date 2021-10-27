@@ -5,8 +5,10 @@ import com.swamisamarthpet.routes.categoryRoutes.getAllCategories
 import com.swamisamarthpet.routes.categoryRoutes.getCategoryById
 import com.swamisamarthpet.routes.categoryRoutes.updateCategory
 import com.swamisamarthpet.routes.categoryRoutes.insertCategory
+import com.swamisamarthpet.routes.downloadImage
 import com.swamisamarthpet.routes.machineRoutes.*
 import com.swamisamarthpet.routes.partRoutes.*
+import com.swamisamarthpet.routes.uploadImage
 import io.ktor.routing.*
 import io.ktor.http.content.*
 import io.ktor.application.*
@@ -38,8 +40,11 @@ fun Application.configureRouting() {
         getPartById()
         getAllParts()
 
-        static("/static") {
-            resources("static")
+        uploadImage()
+        downloadImage()
+
+        static {
+            resources("static/uploads")
         }
 
     }

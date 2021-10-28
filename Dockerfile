@@ -7,10 +7,11 @@ RUN apt-get update
 RUN apt-get install -y dos2unix
 RUN dos2unix gradlew
 
-RUN bash gradlew shadowJar
+RUN bash gradlew fatJar
 
 WORKDIR /run
+RUN cp /src/build/libs/*.jar /run/server.jar
 
-EXPOSE 8080
+EXPOSE 8081
 
-CMD java -jar /build/libs/com.swamisamarthpet.sspi-api-0.0.1-all.jar
+CMD java -jar /run/server.jar

@@ -9,7 +9,6 @@ plugins {
     application
     kotlin("jvm") version "1.5.31"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.5.31"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "com.swamisamarthpet"
@@ -37,10 +36,18 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
 }
 
-tasks{
-    shadowJar {
+tasks {
+    register("fatJar", Jar::class.java) {
+        archiveClassifier.set("all")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         manifest {
-            attributes(Pair("Main-Class", "com.swamisamarthpet.ApplicationKt"))
+            attributes("Main-Class" to "com.swamisamarthpet.ApplicationKt")
         }
+        from(configurations.runtimeClasspath.get()
+            .onEach { println("add from dependencies: ${it.name}") }
+            .map { if (it.isDirectory) it else zipTree(it) })
+        val sourcesMain = sourceSets.main.get()
+        sourcesMain.allSource.forEach { println("add from sources: ${it.name}") }
+        from(sourcesMain.output)
     }
 }

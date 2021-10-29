@@ -3,7 +3,6 @@ package com.swamisamarthpet.plugins
 import io.ktor.features.*
 import org.slf4j.event.*
 import io.ktor.application.*
-import io.ktor.response.*
 import io.ktor.request.*
 
 fun Application.configureMonitoring() {
@@ -11,5 +10,4 @@ fun Application.configureMonitoring() {
         level = Level.INFO
         filter { call -> call.request.path().startsWith("/") }
     }
-
 }

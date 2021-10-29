@@ -1,3 +1,4 @@
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -36,18 +37,3 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
 }
 
-tasks {
-    register("fatJar", Jar::class.java) {
-        archiveClassifier.set("all")
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        manifest {
-            attributes("Main-Class" to "com.swamisamarthpet.ApplicationKt")
-        }
-        from(configurations.runtimeClasspath.get()
-            .onEach { println("add from dependencies: ${it.name}") }
-            .map { if (it.isDirectory) it else zipTree(it) })
-        val sourcesMain = sourceSets.main.get()
-        sourcesMain.allSource.forEach { println("add from sources: ${it.name}") }
-        from(sourcesMain.output)
-    }
-}

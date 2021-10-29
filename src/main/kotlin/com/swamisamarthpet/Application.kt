@@ -9,11 +9,11 @@ const val API_VERSION = "v1"
 
 @Suppress("unused")
 fun Application.module() {
-
     DatabaseFactory.init()
 
     configureRouting()
     configureSerialization()
     configureMonitoring()
+    configureDoubleReceive(this)
 
 }

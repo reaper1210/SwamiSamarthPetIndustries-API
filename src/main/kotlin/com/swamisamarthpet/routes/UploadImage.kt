@@ -21,7 +21,7 @@ fun Route.uploadImage(){
                 if(part is PartData.FileItem) {
                     val name = part.originalFileName!!
                     imageName = name
-                    val file = File("./build/resources/main/static/uploads/$name")
+                    val file = File("./build/resources/main/static/images/$name")
 
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {

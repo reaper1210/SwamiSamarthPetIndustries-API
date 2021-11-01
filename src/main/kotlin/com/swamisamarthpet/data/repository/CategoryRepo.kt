@@ -23,7 +23,7 @@ class CategoryRepo: CategoryDao {
             }
             multiPartData.forEachPart { part->
                 if(part is PartData.FileItem) {
-                    val file = File("./$categoryName.png")
+                    val file = File("./build/resources/main/static/$categoryName.png")
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {
                             its.copyTo(it)
@@ -52,7 +52,7 @@ class CategoryRepo: CategoryDao {
         try{
             val categoryName = getCategoryById(categoryId)?.categoryName
             if(categoryImage is PartData.FileItem) {
-                val file = File("./$categoryName.png")
+                val file = File("./build/resources/main/static/$categoryName.png")
                 categoryImage.streamProvider().use { its ->
                     file.outputStream().buffered().use {
                         its.copyTo(it)
@@ -83,7 +83,7 @@ class CategoryRepo: CategoryDao {
         if(row == null)
             return null
 
-        val imageFile = File("./${row[AllCategoriesTable.categoryImage]}.png")
+        val imageFile = File("./build/resources/main/static/${row[AllCategoriesTable.categoryImage]}.png")
         val image = imageFile.readBytes()
 
         return Category(

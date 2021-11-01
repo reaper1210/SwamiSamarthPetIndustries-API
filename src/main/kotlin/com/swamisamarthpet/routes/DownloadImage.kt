@@ -13,7 +13,7 @@ fun Route.downloadImage(){
     post("$API_VERSION/downloadImage"){
         val parameters = call.receive<Parameters>()
         val filename = parameters["name"]!!
-        val file = File("./build/resources/main/static/images/$filename")
+        val file = File("./build/resources/main/static/$filename")
         if(file.exists()) {
             call.respond(file.readBytes())
         }

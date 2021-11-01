@@ -43,7 +43,7 @@ class MachineRepo(tableName: String): MachineDao {
             for(part in imagePartArray){
                 if(part is PartData.FileItem) {
                     val name = array[i]
-                    val file = File("./build/resources/main/static/images/$name.png")
+                    val file = File("./build/resources/main/static/$name.png")
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {
                             its.copyTo(it)
@@ -95,7 +95,7 @@ class MachineRepo(tableName: String): MachineDao {
             for(part in imagePartArray){
                 if(part is PartData.FileItem) {
                     val name = array[i]
-                    val file = File("./build/resources/main/static/images/$name.png")
+                    val file = File("./build/resources/main/static/$name.png")
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {
                             its.copyTo(it)
@@ -130,7 +130,7 @@ class MachineRepo(tableName: String): MachineDao {
         if(row == null)
             return null
 
-        val path = "./build/resources/main/static/images/"
+        val path = "./build/resources/main/static/"
         val machineImages = HashMap<String,ByteArray>()
         val imageNameList = row[machineTable.machineImages].split(",")
         for(image in imageNameList){

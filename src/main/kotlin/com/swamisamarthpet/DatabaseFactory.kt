@@ -28,8 +28,8 @@ object DatabaseFactory {
         config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
 
         val uri = URI(System.getenv("DATABASE_URL"))
-        val username = System.getenv("DB_USERNAME")
-        val password = System.getenv("DB_PASSWORD")
+        val username = uri.userInfo.split(":").toTypedArray()[0]
+        val password = uri.userInfo.split(":").toTypedArray()[1]
 
         config.jdbcUrl = "jdbc:postgresql://" + uri.host + ":" + uri.port + uri.path + "?sslmode=require" + "&user=$username&password=$password"
 

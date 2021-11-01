@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class Category(
     val categoryId: Int,
     val categoryName: String,
-    val categoryImage: String
+    val categoryImage: ByteArray
 )

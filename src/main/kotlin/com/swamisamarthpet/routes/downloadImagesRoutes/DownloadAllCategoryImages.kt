@@ -12,12 +12,10 @@ fun Route.downloadAllCategoryImages(){
 
     get("$API_VERSION/downloadAllCategoryImages"){
 
-        val path = "./build/resources/main/static/images/"
         val categoryList = CategoryRepo().getAllCategories()
         val categoryImages = HashMap<String,ByteArray>()
         for(category in categoryList){
-            val imageFile = File(path+ category.categoryName + ".png")
-            categoryImages[category.categoryName] = imageFile.readBytes()
+            categoryImages[category.categoryName] = category.categoryImage
         }
         call.respond(HttpStatusCode.OK,categoryImages)
 

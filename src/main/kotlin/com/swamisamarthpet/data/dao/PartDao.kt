@@ -1,14 +1,16 @@
 package com.swamisamarthpet.data.dao
 
 import com.swamisamarthpet.data.model.Part
+import io.ktor.http.content.*
 
 interface PartDao {
 
     suspend fun insertPart(
         partName: String,
-        partImage: String,
-        partDetails: String
-    ): Part?
+        multiPart: MultiPartData,
+        partDetails: String,
+        machineName: String
+    ): Int
 
     suspend fun deletePart(
         partId: Int
@@ -16,8 +18,9 @@ interface PartDao {
 
     suspend fun updatePart(
         partId: Int,
-        partImage: String,
-        partDetails: String
+        multiPart: MultiPartData,
+        partDetails: String,
+        machineName: String
     ): Int
 
     suspend fun getPartById(

@@ -13,8 +13,9 @@ fun Route.updateCategory(){
     post("$API_VERSION/updateCategory"){
 
         val parameters = call.receive<Parameters>()
+        val multiPart = call.receiveMultipart()
         val categoryId = parameters["categoryId"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Id")
-        val categoryImage = parameters["categoryImage"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Image")
+        val categoryImage = multiPart.readPart()?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Image")
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){

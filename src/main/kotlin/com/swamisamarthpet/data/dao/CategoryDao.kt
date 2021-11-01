@@ -1,13 +1,14 @@
 package com.swamisamarthpet.data.dao
 
 import com.swamisamarthpet.data.model.Category
+import io.ktor.http.content.*
 
 interface CategoryDao {
 
     suspend fun insertCategory(
         categoryName: String,
-        categoryImage: String
-    ): Category?
+        categoryImage: PartData
+    ): Int
 
     suspend fun deleteCategory(
         categoryId: Int
@@ -15,7 +16,7 @@ interface CategoryDao {
 
     suspend fun updateCategory(
         categoryId: Int,
-        categoryImage: String
+        categoryImage: PartData
     ): Int
 
     suspend fun getAllCategories(): List<Category>

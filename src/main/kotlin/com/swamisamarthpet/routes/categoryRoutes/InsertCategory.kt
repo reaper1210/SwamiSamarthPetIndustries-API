@@ -28,23 +28,9 @@ fun Route.insertCategory() {
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
 
             try{
-
-                val result = CategoryRepo().insertCategory(categoryName,categoryName)
-                val table = MachineTable(categoryName)
-                transaction {
-                    SchemaUtils.create(table)
-                }
-                if(categoryImage is PartData.FileItem) {
-                    val file = File("./build/resources/main/static/images/$categoryName.png")
-                    categoryImage.streamProvider().use { its ->
-                        file.outputStream().buffered().use {
-                            its.copyTo(it)
-                        }
-                    }
-                }
+                val result = CategoryRepo().insertCategory(categoryName,categoryImage)
                 categoryImage.dispose()
-                call.respond(HttpStatusCode.OK,result!!)
-
+                call.respond(HttpStatusCode.OK,result)
             } catch (e:Throwable){
                 call.respondText(e.message.toString())
             }

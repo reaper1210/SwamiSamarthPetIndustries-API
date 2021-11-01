@@ -23,35 +23,8 @@ fun Route.insertPart(){
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
             try{
 
-                var i = 1
-                val array = arrayListOf<String>()
-                val imagePartArray = arrayListOf<PartData>()
-                multiPart.forEachPart {
-                    if(it is PartData.FileItem) {
-                        array.add(machineName+partName+i)
-                        imagePartArray.add(it)
-                        i++
-                    }
-                }
-                val partImages = array.joinToString(",")
-
-                val result = PartRepo(machineName).insertPart(partName,partImages,partDetails)
-
-                i = 0
-                for(part in imagePartArray){
-                    if(part is PartData.FileItem) {
-                        val name = array[i]
-                        val file = File("./build/resources/main/static/images/$name.png")
-                        part.streamProvider().use { its ->
-                            file.outputStream().buffered().use {
-                                its.copyTo(it)
-                            }
-                        }
-                    }
-                    i++
-                    part.dispose()
-                }
-                call.respond(HttpStatusCode.OK,result!!)
+                val result = PartRepo(machineName).insertPart(partName,multiPart,partDetails,machineName)
+                call.respond(HttpStatusCode.OK,result)
 
             }catch (e: Throwable){
                 call.respond(e.message.toString())

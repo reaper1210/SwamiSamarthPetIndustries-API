@@ -11,15 +11,15 @@ import io.ktor.routing.*
 fun Route.updatePart(){
     post("$API_VERSION/updatePart"){
         val parameters = call.receive<Parameters>()
+        val multiPart = call.receiveMultipart()
         val partId = parameters["partId"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Id")
-        val partImage = parameters["partImage"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Image")
         val partDetails = parameters["partDetails"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Details")
         val machineName = parameters["machineName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Machine Name")
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
             try{
-                val result = PartRepo(machineName).updatePart(partId.toInt(),partImage,partDetails)
+                val result = PartRepo(machineName).updatePart(partId.toInt(),multiPart,partDetails,machineName)
                 call.respond(HttpStatusCode.OK,result)
             }catch(e: Throwable){
                 call.respond(e.message.toString())

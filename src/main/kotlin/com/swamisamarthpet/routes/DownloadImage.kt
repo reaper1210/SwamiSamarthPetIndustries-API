@@ -1,6 +1,7 @@
 package com.swamisamarthpet.routes
 
 import com.swamisamarthpet.API_VERSION
+import com.swamisamarthpet.data.tables.AllCategoriesTable
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -12,7 +13,7 @@ fun Route.downloadImage(){
     post("$API_VERSION/downloadImage"){
         val parameters = call.receive<Parameters>()
         val filename = parameters["name"]!!
-        val file = File("./src/main/resources/static/uploads/$filename")
+        val file = File("./build/resources/main/static/images/$filename")
         if(file.exists()) {
             call.respond(file.readBytes())
         }

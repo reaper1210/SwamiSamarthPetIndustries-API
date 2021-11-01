@@ -13,8 +13,8 @@ fun Route.updateMachine(){
     post("$API_VERSION/updateMachine"){
 
         val parameters = call.receive<Parameters>()
+        val multiPart = call.receiveMultipart()
         val machineId = parameters["machineId"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Id")
-        val machineImage = parameters["machineImage"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Image")
         val machineDetails = parameters["machineDetails"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Details")
         val machinePdf = parameters["machinePdf"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Pdf")
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
@@ -22,7 +22,7 @@ fun Route.updateMachine(){
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
             try{
-                val result = MachineRepo(categoryName).updateMachine(machineId.toInt(),machineImage,machineDetails,machinePdf)
+                val result = MachineRepo(categoryName).updateMachine(machineId.toInt(),multiPart,machineDetails,machinePdf)
                 call.respond(HttpStatusCode.OK,result)
             }
             catch (e: Throwable){

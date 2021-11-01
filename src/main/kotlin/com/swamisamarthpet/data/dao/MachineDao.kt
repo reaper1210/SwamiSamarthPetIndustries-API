@@ -1,15 +1,16 @@
 package com.swamisamarthpet.data.dao
 
 import com.swamisamarthpet.data.model.Machine
+import io.ktor.http.content.*
 
 interface MachineDao {
 
     suspend fun insertMachine(
         machineName: String,
-        machineImage: String,
+        multiPart: MultiPartData,
         machineDetails: String,
         machinePdf: String
-    ): Machine?
+    ): Int
 
     suspend fun deleteMachine(
         machineId: Int
@@ -17,7 +18,7 @@ interface MachineDao {
 
     suspend fun updateMachine(
         machineId: Int,
-        machineImage: String,
+        multiPart: MultiPartData,
         machineDetails: String,
         machinePdf: String
     ): Int

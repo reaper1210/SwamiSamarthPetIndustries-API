@@ -23,13 +23,7 @@ fun Route.downloadAllPartImages(){
                 val partList = PartRepo(machine.machineName).getAllParts()
                 val currentMachineParts = HashMap<String,HashMap<String,ByteArray>>()
                 for(part in partList){
-                    val imageNameList = part.partImage.split(",")
-                    val currentPartImages = HashMap<String,ByteArray>()
-                    for(image in imageNameList){
-                        val imageFile = File("$path$image.png")
-                        currentPartImages[image] = imageFile.readBytes()
-                    }
-                    currentMachineParts[part.partName]=currentPartImages
+                    currentMachineParts[part.partName] = part.partImages
                 }
                 partImages[machine.machineName] = currentMachineParts
             }

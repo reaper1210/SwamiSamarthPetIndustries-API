@@ -30,39 +30,8 @@ fun Route.insertMachine(){
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
             try{
 
-                var i = 1
-                val array = arrayListOf<String>()
-                val imagePartArray = arrayListOf<PartData>()
-                multiPart.forEachPart {
-                    if(it is PartData.FileItem) {
-                        array.add(machineName+i)
-                        imagePartArray.add(it)
-                        i++
-                    }
-                }
-                val machineImages = array.joinToString(",")
-
-                val result = MachineRepo(categoryName).insertMachine(machineName,machineImages,machineDetails,machinePdf)
-                val table = PartTable(machineName)
-                transaction{
-                    SchemaUtils.create(table)
-                }
-
-                i = 0
-                for(part in imagePartArray){
-                    if(part is PartData.FileItem) {
-                        val name = array[i]
-                        val file = File("./build/resources/main/static/images/$name.png")
-                        part.streamProvider().use { its ->
-                            file.outputStream().buffered().use {
-                                its.copyTo(it)
-                            }
-                        }
-                    }
-                    i++
-                    part.dispose()
-                }
-                call.respond(HttpStatusCode.OK,result!!)
+                val result = MachineRepo(categoryName).insertMachine(machineName,multiPart,machineDetails,machinePdf)
+                call.respond(HttpStatusCode.OK,result)
 
             }catch (e:Throwable){
                 call.respondText(e.message.toString())

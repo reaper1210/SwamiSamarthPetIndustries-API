@@ -22,14 +22,12 @@ fun Route.insertCategory() {
         val parameters = call.receiveParameters()
         val multiPartData = call.receiveMultipart()
         val categoryName = parameters["categoryName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing name")
-        val categoryImage = multiPartData.readPart()?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Image")
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
 
             try{
-                val result = CategoryRepo().insertCategory(categoryName,categoryImage)
-                categoryImage.dispose()
+                val result = CategoryRepo().insertCategory(categoryName,multiPartData)
                 call.respond(HttpStatusCode.OK,result)
             } catch (e:Throwable){
                 call.respondText(e.message.toString())

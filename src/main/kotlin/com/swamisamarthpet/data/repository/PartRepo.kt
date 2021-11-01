@@ -28,9 +28,8 @@ class PartRepo(tableName: String): PartDao {
             }
             val partImages = array.joinToString(",")
 
-            var statement: InsertStatement<Number>? = null
             DatabaseFactory.dbQuery {
-                statement = partTable.insert { part ->
+                partTable.insert { part ->
                     part[partTable.partName] = partName
                     part[partTable.partImages] = partImages
                     part[partTable.partDetails] = partDetails
@@ -51,8 +50,7 @@ class PartRepo(tableName: String): PartDao {
                 i++
                 part.dispose()
             }
-            val partId = rowToPart(statement?.resultedValues?.get(0))?.partId!!
-            partId
+            1
         }catch (e: Throwable){
             0
         }

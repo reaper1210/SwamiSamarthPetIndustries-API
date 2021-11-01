@@ -30,9 +30,8 @@ class MachineRepo(tableName: String): MachineDao {
             }
             val machineImages = array.joinToString(",")
 
-            var statement: InsertStatement<Number>? = null
             DatabaseFactory.dbQuery {
-                statement = machineTable.insert { machine ->
+                machineTable.insert { machine ->
                     machine[machineTable.machineName] = machineName
                     machine[machineTable.machineImages] = machineImages
                     machine[machineTable.machineDetails] = machineDetails
@@ -58,10 +57,9 @@ class MachineRepo(tableName: String): MachineDao {
             transaction{
                 SchemaUtils.create(table)
             }
-            val machineId = rowToMachine(statement?.resultedValues?.get(0))?.machineId!!
-            machineId
+            1
         }catch (e: Throwable) {
-            -1
+            0
         }
 
 

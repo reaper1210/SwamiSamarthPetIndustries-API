@@ -13,31 +13,34 @@ import java.io.File
 
 class CategoryRepo: CategoryDao {
 
-    override suspend fun insertCategory(categoryName: String, categoryImage: PartData): Int =
+    override suspend fun insertCategory(categoryName: String, multiPartData: MultiPartData): Int =
         try{
-            var statement: InsertStatement<Number>? = null
             DatabaseFactory.dbQuery {
-                statement = AllCategoriesTable.insert { category ->
+                AllCategoriesTable.insert { category ->
                     category[AllCategoriesTable.categoryName] = categoryName
                     category[AllCategoriesTable.categoryImage] = categoryName
                 }
             }
-            if(categoryImage is PartData.FileItem) {
-                val file = File("./build/resources/main/static/images/$categoryName.png")
-                categoryImage.streamProvider().use { its ->
-                    file.outputStream().buffered().use {
-                        its.copyTo(it)
+            multiPartData.forEachPart { part->
+                if(part is PartData.FileItem) {
+                    val file = File("./build/resources/main/static/images/$categoryName.png")
+                    part.streamProvider().use { its ->
+                        file.outputStream().buffered().use {
+                            its.copyTo(it)
+                        }
                     }
+                    return@forEachPart
                 }
             }
+
             val table = MachineTable(categoryName)
             transaction {
                 SchemaUtils.create(table)
             }
-            val categoryId = rowToCategory(statement?.resultedValues?.get(0))?.categoryId!!
-            categoryId
+            1
         }catch (e: Throwable){
-            -1
+            e.printStackTrace()
+            0
         }
 
     override suspend fun deleteCategory(categoryId: Int): Int =

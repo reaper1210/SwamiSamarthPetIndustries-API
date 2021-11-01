@@ -7,7 +7,7 @@ interface CategoryDao {
 
     suspend fun insertCategory(
         categoryName: String,
-        categoryImage: PartData
+        multiPartData: MultiPartData
     ): Int
 
     suspend fun deleteCategory(

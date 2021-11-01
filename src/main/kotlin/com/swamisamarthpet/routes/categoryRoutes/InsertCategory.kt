@@ -45,8 +45,6 @@ fun Route.insertCategory() {
                 categoryImage.dispose()
                 call.respond(HttpStatusCode.OK,result!!)
 
-            } catch (e: ExposedSQLException){
-                call.respondText("duplicateName")
             } catch (e:Throwable){
                 call.respondText(e.message.toString())
             }

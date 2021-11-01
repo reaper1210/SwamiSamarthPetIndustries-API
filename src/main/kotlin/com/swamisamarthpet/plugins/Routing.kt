@@ -7,6 +7,8 @@ import com.swamisamarthpet.routes.categoryRoutes.updateCategory
 import com.swamisamarthpet.routes.categoryRoutes.insertCategory
 import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllCategoryImages
 import com.swamisamarthpet.routes.downloadImage
+import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllMachineImages
+import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllPartImages
 import com.swamisamarthpet.routes.machineRoutes.*
 import com.swamisamarthpet.routes.partRoutes.*
 import com.swamisamarthpet.routes.uploadImage
@@ -44,6 +46,8 @@ fun Application.configureRouting() {
         uploadImage()
         downloadImage()
         downloadAllCategoryImages()
+        downloadAllMachineImages()
+        downloadAllPartImages()
 
         static {
             resources("static")

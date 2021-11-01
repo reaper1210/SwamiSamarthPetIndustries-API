@@ -20,12 +20,12 @@ fun Route.downloadAllMachineImages(){
             val machineList = MachineRepo(category.categoryName).getAllMachines()
             for(i in machineList.indices){
                 val imageNameList = machineList[i].machineImage.split(",")
-                val thisMachineImages = HashMap<String,ByteArray>()
+                val currentMachineImages = HashMap<String,ByteArray>()
                 for(image in imageNameList){
                     val imageFile = File("$path$image.png")
-                    thisMachineImages[image]=imageFile.readBytes()
+                    currentMachineImages[image]=imageFile.readBytes()
                 }
-                machineImages[imageNameList[i]] = thisMachineImages
+                machineImages[machineList[i].machineName] = currentMachineImages
             }
         }
         call.respond(HttpStatusCode.OK,machineImages)

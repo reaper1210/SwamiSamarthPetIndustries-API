@@ -7,7 +7,6 @@ import com.swamisamarthpet.data.tables.MachineTable
 import com.swamisamarthpet.data.tables.PartTable
 import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 import java.util.*
@@ -41,13 +40,14 @@ class MachineRepo(tableName: String): MachineDao {
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
-                        machineImages.add(file.readBytes().contentToString())
+                        val bytes = file.readBytes()
+                        machineImages.add(Base64.getEncoder().encodeToString(bytes))
                     }
                     if(i==imagePartArray.size-1){
                         DatabaseFactory.dbQuery {
                             machineTable.insert { machine ->
                                 machine[machineTable.machineName] = machineName
-                                machine[machineTable.machineImages] = machineImages.toString()
+                                machine[machineTable.machineImages] = machineImages.joinToString(";")
                                 machine[machineTable.machineDetails] = machineDetails
                                 machine[machineTable.machinePdf] = machinePdf
                             }
@@ -135,12 +135,11 @@ class MachineRepo(tableName: String): MachineDao {
         if(row == null)
             return null
 
-        val path = "./build/resources/main/static/"
-        val machineImages = HashMap<String,ByteArray>()
-        val imageNameList = row[machineTable.machineImages].split(",")
-        for(image in imageNameList){
-            val imageFile = File("$path$image.png")
-            machineImages[image]=imageFile.readBytes()
+        val machineImages = HashMap<Int,ByteArray>()
+        val images = row[machineTable.machineImages].split(";")
+        for(i in 1..images.size){
+            val imageByteArray = Base64.getDecoder().decode(images[i-1])
+            machineImages[i]=imageByteArray
         }
 
         return Machine(

@@ -7,11 +7,8 @@ import com.swamisamarthpet.data.tables.AllCategoriesTable
 import com.swamisamarthpet.data.tables.MachineTable
 import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
-import java.util.*
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class CategoryRepo: CategoryDao {
 

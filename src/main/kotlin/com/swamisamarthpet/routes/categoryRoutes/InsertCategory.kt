@@ -23,6 +23,7 @@ fun Route.insertCategory() {
         val multiPartData = call.receiveMultipart()
         val categoryName = parameters["categoryName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing name")
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
+        
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
 

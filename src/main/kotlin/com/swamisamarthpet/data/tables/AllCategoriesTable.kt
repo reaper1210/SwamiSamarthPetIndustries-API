@@ -9,7 +9,7 @@ object AllCategoriesTable: Table() {
 
     val categoryId: Column<Int> = integer("categoryId").autoIncrement()
     val categoryName: Column<String> = varchar("categoryName",500).uniqueIndex()
-    val categoryImage: Column<String> = varchar("categoryImage",5000)
+    val categoryImage: Column<String> = varchar("categoryImage",10485760)
 
     override val primaryKey: PrimaryKey = PrimaryKey(categoryId)
 

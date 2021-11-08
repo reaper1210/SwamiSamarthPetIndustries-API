@@ -15,12 +15,6 @@ class CategoryRepo: CategoryDao {
 
     override suspend fun insertCategory(categoryName: String, multiPartData: MultiPartData): Int =
         try{
-            DatabaseFactory.dbQuery {
-                AllCategoriesTable.insert { category ->
-                    category[AllCategoriesTable.categoryName] = categoryName
-                    category[AllCategoriesTable.categoryImage] = categoryName
-                }
-            }
             multiPartData.forEachPart { part->
                 if(part is PartData.FileItem) {
                     val file = File("./build/resources/main/static/$categoryName.png")
@@ -28,8 +22,15 @@ class CategoryRepo: CategoryDao {
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
+                        DatabaseFactory.dbQuery {
+                            AllCategoriesTable.insert { category ->
+                                category[AllCategoriesTable.categoryName] = categoryName
+                                category[AllCategoriesTable.categoryImage] = file.readBytes().toString()
+                            }
+                        }
+                        println(file.readBytes().toString())
+                        return@forEachPart
                     }
-                    return@forEachPart
                 }
             }
 

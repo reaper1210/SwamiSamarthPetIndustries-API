@@ -9,6 +9,8 @@ import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import java.io.File
+import java.util.*
+import kotlin.collections.HashMap
 
 class PartRepo(tableName: String): PartDao {
 
@@ -19,20 +21,12 @@ class PartRepo(tableName: String): PartDao {
             var i = 1
             val array = arrayListOf<String>()
             val imagePartArray = arrayListOf<PartData>()
+            val partImages = arrayListOf<String>()
             multiPart.forEachPart {
                 if(it is PartData.FileItem) {
                     array.add(machineName+partName+i)
                     imagePartArray.add(it)
                     i++
-                }
-            }
-            val partImages = array.joinToString(",")
-
-            DatabaseFactory.dbQuery {
-                partTable.insert { part ->
-                    part[partTable.partName] = partName
-                    part[partTable.partImages] = partImages
-                    part[partTable.partDetails] = partDetails
                 }
             }
 
@@ -44,6 +38,17 @@ class PartRepo(tableName: String): PartDao {
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {
                             its.copyTo(it)
+                        }
+                        val bytes = file.readBytes()
+                        partImages.add(Base64.getEncoder().encodeToString(bytes))
+                    }
+                    if(i==imagePartArray.lastIndex){
+                        DatabaseFactory.dbQuery {
+                            partTable.insert { part ->
+                                part[partTable.partName] = partName
+                                part[partTable.partImages] = partImages.joinToString(";")
+                                part[partTable.partDetails] = partDetails
+                            }
                         }
                     }
                 }
@@ -66,6 +71,7 @@ class PartRepo(tableName: String): PartDao {
             var i = 1
             val array = arrayListOf<String>()
             val imagePartArray = arrayListOf<PartData>()
+            val partImages = arrayListOf<String>()
             multiPart.forEachPart {
                 if(it is PartData.FileItem) {
                     array.add(machineName+partName+i)
@@ -73,17 +79,6 @@ class PartRepo(tableName: String): PartDao {
                     i++
                 }
             }
-            val partImages = array.joinToString(",")
-
-            DatabaseFactory.dbQuery {
-                partTable.update({
-                    partTable.partId.eq(partId)
-                }){ statement->
-                    statement[partTable.partImages] = partImages
-                    statement[partTable.partDetails] = partDetails
-                }
-            }
-
             i = 0
             for(part in imagePartArray){
                 if(part is PartData.FileItem) {
@@ -92,6 +87,18 @@ class PartRepo(tableName: String): PartDao {
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {
                             its.copyTo(it)
+                        }
+                        val bytes = file.readBytes()
+                        partImages.add(Base64.getEncoder().encodeToString(bytes))
+                    }
+                    if(i==imagePartArray.lastIndex){
+                        DatabaseFactory.dbQuery {
+                            partTable.update({
+                                partTable.partId.eq(partId)
+                            }){ statement->
+                                statement[partTable.partImages] = partImages.joinToString(";")
+                                statement[partTable.partDetails] = partDetails
+                            }
                         }
                     }
                 }

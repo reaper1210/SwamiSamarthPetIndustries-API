@@ -45,7 +45,7 @@ class MachineRepo(tableName: String): MachineDao {
                         val bytes = file.readBytes()
                         machineImages.add(Base64.getEncoder().encodeToString(bytes))
                     }
-                    if(i==imagePartArray.size-1){
+                    if(i==imagePartArray.lastIndex){
                         DatabaseFactory.dbQuery {
                             machineTable.insert { machine ->
                                 machine[machineTable.machineName] = machineName
@@ -88,16 +88,8 @@ class MachineRepo(tableName: String): MachineDao {
                     i++
                 }
             }
-            val machineImages = array.joinToString(",")
-            DatabaseFactory.dbQuery {
-                machineTable.update({
-                    machineTable.machineId.eq(machineId)
-                }){ statement ->
-                    statement[machineTable.machineImages] = machineImages
-                    statement[machineTable.machineDetails] = machineDetails
-                    statement[machineTable.machinePdf] = machinePdf
-                }
-            }
+            val machineImages = arrayListOf<String>()
+
             i = 0
             for(part in imagePartArray){
                 if(part is PartData.FileItem) {
@@ -106,6 +98,20 @@ class MachineRepo(tableName: String): MachineDao {
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {
                             its.copyTo(it)
+                        }
+                        val bytes = file.readBytes()
+                        machineImages.add(Base64.getEncoder().encodeToString(bytes))
+
+                        if(i==imagePartArray.lastIndex){
+                            DatabaseFactory.dbQuery {
+                                machineTable.update({
+                                    machineTable.machineId.eq(machineId)
+                                }){ statement ->
+                                    statement[machineTable.machineImages] = machineImages.joinToString(";")
+                                    statement[machineTable.machineDetails] = machineDetails
+                                    statement[machineTable.machinePdf] = machinePdf
+                                }
+                            }
                         }
                     }
                 }

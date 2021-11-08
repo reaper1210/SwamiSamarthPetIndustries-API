@@ -7,6 +7,7 @@ import com.swamisamarthpet.data.tables.AllCategoriesTable
 import com.swamisamarthpet.data.tables.MachineTable
 import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 import java.util.*
@@ -58,6 +59,14 @@ class CategoryRepo: CategoryDao {
                 categoryImage.streamProvider().use { its ->
                     file.outputStream().buffered().use {
                         its.copyTo(it)
+                    }
+                    val bytes = Base64.getEncoder().encodeToString(file.readBytes())
+                    DatabaseFactory.dbQuery {
+                        AllCategoriesTable.update({
+                            AllCategoriesTable.categoryId.eq(categoryId)
+                        }){ statement ->
+                            statement[AllCategoriesTable.categoryImage] = bytes
+                        }
                     }
                 }
             }

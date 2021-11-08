@@ -14,6 +14,7 @@ import kotlin.collections.HashMap
 
 class MachineRepo(tableName: String): MachineDao {
 
+
     private val machineTable = MachineTable(tableName)
 
     override suspend fun insertMachine(machineName: String, multiPart: MultiPartData, machineDetails: String, machinePdf: String): Int =

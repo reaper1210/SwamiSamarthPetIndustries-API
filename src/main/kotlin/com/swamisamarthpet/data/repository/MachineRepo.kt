@@ -20,6 +20,7 @@ class MachineRepo(tableName: String): MachineDao {
     override suspend fun insertMachine(machineName: String, multiPart: MultiPartData, machineDetails: String, machinePdf: String): Int =
 
         try {
+
             var i = 1
             val array = arrayListOf<String>()
             val imagePartArray = arrayListOf<PartData>()

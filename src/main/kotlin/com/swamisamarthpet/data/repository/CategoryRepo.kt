@@ -10,6 +10,8 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import java.util.*
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class CategoryRepo: CategoryDao {
 
@@ -25,7 +27,7 @@ class CategoryRepo: CategoryDao {
                         DatabaseFactory.dbQuery {
                             AllCategoriesTable.insert { category ->
                                 category[AllCategoriesTable.categoryName] = categoryName
-                                category[AllCategoriesTable.categoryImage] = file.readBytes().toString()
+                                category[AllCategoriesTable.categoryImage] = file.readBytes().contentToString()
                             }
                         }
                         println(file.readBytes().toString())

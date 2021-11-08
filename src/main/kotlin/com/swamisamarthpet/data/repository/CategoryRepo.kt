@@ -9,6 +9,7 @@ import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import java.util.*
 
 class CategoryRepo: CategoryDao {
 
@@ -21,10 +22,11 @@ class CategoryRepo: CategoryDao {
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
+                        val bytes = Base64.getEncoder().encodeToString(file.readBytes())
                         DatabaseFactory.dbQuery {
                             AllCategoriesTable.insert { category ->
                                 category[AllCategoriesTable.categoryName] = categoryName
-                                category[AllCategoriesTable.categoryImage] = file.readBytes().contentToString()
+                                category[AllCategoriesTable.categoryImage] = bytes
                             }
                         }
                         println(file.readBytes().toString())
@@ -83,8 +85,7 @@ class CategoryRepo: CategoryDao {
         if(row == null)
             return null
 
-        val imageFile = File("./build/resources/main/static/${row[AllCategoriesTable.categoryImage]}.png")
-        val image = imageFile.readBytes()
+        val image = Base64.getDecoder().decode(row[AllCategoriesTable.categoryImage])
 
         return Category(
             categoryId = row[AllCategoriesTable.categoryId],

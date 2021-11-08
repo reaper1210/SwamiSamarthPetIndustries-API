@@ -14,7 +14,7 @@ fun Route.downloadAllMachineImages(){
     get("$API_VERSION/downloadAllMachineImages"){
 
         val categoryList = CategoryRepo().getAllCategories()
-        val machineImages = HashMap<String,HashMap<String,ByteArray>>()
+        val machineImages = HashMap<String,HashMap<Int,ByteArray>>()
         for(category in categoryList){
             val machineList = MachineRepo(category.categoryName).getAllMachines()
             for(machine in machineList){

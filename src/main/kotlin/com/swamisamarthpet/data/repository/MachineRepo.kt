@@ -10,6 +10,8 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import java.util.*
+import kotlin.collections.HashMap
 
 class MachineRepo(tableName: String): MachineDao {
 
@@ -21,21 +23,12 @@ class MachineRepo(tableName: String): MachineDao {
             var i = 1
             val array = arrayListOf<String>()
             val imagePartArray = arrayListOf<PartData>()
+            val machineImages = arrayListOf<String>()
             multiPart.forEachPart {
                 if(it is PartData.FileItem) {
                     array.add(machineName+i)
                     imagePartArray.add(it)
                     i++
-                }
-            }
-            val machineImages = array.joinToString(",")
-
-            DatabaseFactory.dbQuery {
-                machineTable.insert { machine ->
-                    machine[machineTable.machineName] = machineName
-                    machine[machineTable.machineImages] = machineImages
-                    machine[machineTable.machineDetails] = machineDetails
-                    machine[machineTable.machinePdf] = machinePdf
                 }
             }
 
@@ -48,11 +41,23 @@ class MachineRepo(tableName: String): MachineDao {
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
+                        machineImages.add(file.readBytes().contentToString())
+                    }
+                    if(i==imagePartArray.size-1){
+                        DatabaseFactory.dbQuery {
+                            machineTable.insert { machine ->
+                                machine[machineTable.machineName] = machineName
+                                machine[machineTable.machineImages] = machineImages.toString()
+                                machine[machineTable.machineDetails] = machineDetails
+                                machine[machineTable.machinePdf] = machinePdf
+                            }
+                        }
                     }
                 }
                 i++
                 part.dispose()
             }
+
             val table = PartTable(machineName)
             transaction{
                 SchemaUtils.create(table)

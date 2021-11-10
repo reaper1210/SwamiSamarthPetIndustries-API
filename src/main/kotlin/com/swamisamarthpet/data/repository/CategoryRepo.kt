@@ -7,10 +7,11 @@ import com.swamisamarthpet.data.tables.AllCategoriesTable
 import com.swamisamarthpet.data.tables.MachineTable
 import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
+import java.util.zip.Deflater
 
 class CategoryRepo: CategoryDao {
 
@@ -23,19 +24,31 @@ class CategoryRepo: CategoryDao {
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
-                        val bytes = Base64.getEncoder().encodeToString(file.readBytes())
+
+                        //adminAppCode
+                        val compressor = Deflater()
+                        compressor.setLevel(Deflater.BEST_COMPRESSION)
+                        compressor.setInput(file.readBytes())
+                        compressor.finish()
+                        val bos = ByteArrayOutputStream(file.readBytes().size)
+                        val buf = ByteArray(1024)
+                        while (!compressor.finished()) {
+                            val count = compressor.deflate(buf)
+                            bos.write(buf, 0, count)
+                        }
+                        bos.close()
+                        val byteArrayString = bos.toByteArray().contentToString()
+
                         DatabaseFactory.dbQuery {
                             AllCategoriesTable.insert { category ->
                                 category[AllCategoriesTable.categoryName] = categoryName
-                                category[AllCategoriesTable.categoryImage] = bytes
+                                category[categoryImage] = byteArrayString
                             }
                         }
-                        println(file.readBytes().toString())
                         return@forEachPart
                     }
                 }
             }
-
             val table = MachineTable(categoryName)
             transaction {
                 SchemaUtils.create(table)
@@ -60,12 +73,24 @@ class CategoryRepo: CategoryDao {
                     file.outputStream().buffered().use {
                         its.copyTo(it)
                     }
-                    val bytes = Base64.getEncoder().encodeToString(file.readBytes())
+                    //adminAppCode
+                    val compressor = Deflater()
+                    compressor.setLevel(Deflater.BEST_COMPRESSION)
+                    compressor.setInput(file.readBytes())
+                    compressor.finish()
+                    val bos = ByteArrayOutputStream(file.readBytes().size)
+                    val buf = ByteArray(1024)
+                    while (!compressor.finished()) {
+                        val count = compressor.deflate(buf)
+                        bos.write(buf, 0, count)
+                    }
+                    bos.close()
+                    val byteArrayString = bos.toByteArray().contentToString()
                     DatabaseFactory.dbQuery {
                         AllCategoriesTable.update({
                             AllCategoriesTable.categoryId.eq(categoryId)
                         }){ statement ->
-                            statement[AllCategoriesTable.categoryImage] = bytes
+                            statement[AllCategoriesTable.categoryImage] = byteArrayString
                         }
                     }
                 }
@@ -94,12 +119,10 @@ class CategoryRepo: CategoryDao {
         if(row == null)
             return null
 
-        val image = Base64.getDecoder().decode(row[AllCategoriesTable.categoryImage])
-
         return Category(
             categoryId = row[AllCategoriesTable.categoryId],
             categoryName = row[AllCategoriesTable.categoryName],
-            categoryImage = image
+            categoryImage = row[AllCategoriesTable.categoryImage]
         )
     }
 

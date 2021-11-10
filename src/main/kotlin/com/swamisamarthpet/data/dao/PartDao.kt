@@ -27,6 +27,6 @@ interface PartDao {
         partId: Int
     ): Part?
 
-    suspend fun getAllParts(): List<Part>
+    suspend fun getAllParts(): List<HashMap<String,String>>
 
 }

@@ -13,7 +13,7 @@ fun Route.downloadAllCategoryImages(){
     get("$API_VERSION/downloadAllCategoryImages"){
 
         val categoryList = CategoryRepo().getAllCategories()
-        val categoryImages = HashMap<String,ByteArray>()
+        val categoryImages = HashMap<String,String>()
         for(category in categoryList){
             categoryImages[category.categoryName] = category.categoryImage
         }

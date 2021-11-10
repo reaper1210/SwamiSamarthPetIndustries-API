@@ -27,6 +27,6 @@ interface MachineDao {
         machineId: Int
     ): Machine?
 
-    suspend fun getAllMachines(): List<Machine>
+    suspend fun getAllMachines(): List<HashMap<String,String>>
 
 }

@@ -8,12 +8,13 @@ import com.swamisamarthpet.data.tables.PartTable
 import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
+import java.util.zip.Deflater
 import kotlin.collections.HashMap
 
 class MachineRepo(tableName: String): MachineDao {
-
 
     private val machineTable = MachineTable(tableName)
 
@@ -42,8 +43,19 @@ class MachineRepo(tableName: String): MachineDao {
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
-                        val bytes = file.readBytes()
-                        machineImages.add(Base64.getEncoder().encodeToString(bytes))
+                        //adminAppCode
+                        val compressor = Deflater()
+                        compressor.setLevel(Deflater.BEST_COMPRESSION)
+                        compressor.setInput(file.readBytes())
+                        compressor.finish()
+                        val bos = ByteArrayOutputStream(file.readBytes().size)
+                        val buf = ByteArray(1024)
+                        while (!compressor.finished()) {
+                            val count = compressor.deflate(buf)
+                            bos.write(buf, 0, count)
+                        }
+                        bos.close()
+                        machineImages.add(bos.toByteArray().contentToString())
                     }
                     if(i==imagePartArray.lastIndex){
                         DatabaseFactory.dbQuery {
@@ -68,7 +80,6 @@ class MachineRepo(tableName: String): MachineDao {
         }catch (e: Throwable) {
             0
         }
-
 
     override suspend fun deleteMachine(machineId: Int): Int =
         DatabaseFactory.dbQuery {
@@ -99,8 +110,19 @@ class MachineRepo(tableName: String): MachineDao {
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
-                        val bytes = file.readBytes()
-                        machineImages.add(Base64.getEncoder().encodeToString(bytes))
+                        //adminAppCode
+                        val compressor = Deflater()
+                        compressor.setLevel(Deflater.BEST_COMPRESSION)
+                        compressor.setInput(file.readBytes())
+                        compressor.finish()
+                        val bos = ByteArrayOutputStream(file.readBytes().size)
+                        val buf = ByteArray(1024)
+                        while (!compressor.finished()) {
+                            val count = compressor.deflate(buf)
+                            bos.write(buf, 0, count)
+                        }
+                        bos.close()
+                        machineImages.add(bos.toByteArray().contentToString())
 
                         if(i==imagePartArray.lastIndex){
                             DatabaseFactory.dbQuery {
@@ -132,28 +154,32 @@ class MachineRepo(tableName: String): MachineDao {
             }.singleOrNull()
         }
 
-    override suspend fun getAllMachines(): List<Machine> =
-        DatabaseFactory.dbQuery{
+    override suspend fun getAllMachines(): List<HashMap<String,String>>{
+        val machineHashMap = ArrayList<HashMap<String,String>>()
+        val rawList = DatabaseFactory.dbQuery{
             machineTable.selectAll().mapNotNull {
                 rowToMachine(it)
             }
         }
+        for(rawMachine in rawList){
+            val imageList = rawMachine.machineImages.split(";")
+            val machine = HashMap<String,String>()
+            machine["machineId"] = rawMachine.machineId.toString()
+            machine["machineName"] = rawMachine.machineName
+            machine["machineImage"] = imageList[0]
+            machineHashMap.add(machine)
+        }
+        return machineHashMap
+    }
 
     private fun rowToMachine(row: ResultRow?): Machine? {
         if(row == null)
             return null
 
-        val machineImages = HashMap<Int,ByteArray>()
-        val images = row[machineTable.machineImages].split(";")
-        for(i in 1..images.size){
-            val imageByteArray = Base64.getDecoder().decode(images[i-1])
-            machineImages[i]=imageByteArray
-        }
-
         return Machine(
             machineId = row[machineTable.machineId],
             machineName = row[machineTable.machineName],
-            machineImages = machineImages,
+            machineImages = row[machineTable.machineImages],
             machineDetails = row[machineTable.machineDetails],
             machinePdf = row[machineTable.machinePdf]
         )

@@ -14,21 +14,21 @@ fun Route.downloadAllPartImages(){
 
     get("$API_VERSION/downloadAllPartImages"){
 
-        val path = "./build/resources/main/static/images/"
-        val categoryList = CategoryRepo().getAllCategories()
-        val partImages = HashMap<String,HashMap<String,HashMap<String,ByteArray>>>()
-        for(category in categoryList){
-            val machineList = MachineRepo(category.categoryName).getAllMachines()
-            for(machine in machineList){
-                val partList = PartRepo(machine.machineName).getAllParts()
-                val currentMachineParts = HashMap<String,HashMap<String,ByteArray>>()
-                for(part in partList){
-                    currentMachineParts[part.partName] = part.partImages
-                }
-                partImages[machine.machineName] = currentMachineParts
-            }
-        }
-        call.respond(HttpStatusCode.OK,partImages)
+//        val path = "./build/resources/main/static/images/"
+//        val categoryList = CategoryRepo().getAllCategories()
+//        val partImages = HashMap<String,HashMap<String,HashMap<String,ByteArray>>>()
+//        for(category in categoryList){
+//            val machineList = MachineRepo(category.categoryName).getAllMachines()
+//            for(machine in machineList){
+//                val partList = PartRepo(machine.machineName).getAllParts()
+//                val currentMachineParts = HashMap<String,HashMap<String,ByteArray>>()
+//                for(part in partList){
+//                    currentMachineParts[part.partName] = part.partImages
+//                }
+//                partImages[machine.machineName] = currentMachineParts
+//            }
+//        }
+//        call.respond(HttpStatusCode.OK,partImages)
 
     }
 

@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class Part(
     val partId: Int,
     val partName: String,
-    val partImages: HashMap<String,ByteArray>,
+    val partImages: String,
     val partDetails: String
 )

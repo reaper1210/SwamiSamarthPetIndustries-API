@@ -8,8 +8,10 @@ import com.swamisamarthpet.data.tables.PartTable
 import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
+import java.util.zip.Deflater
 import kotlin.collections.HashMap
 
 class PartRepo(tableName: String): PartDao {
@@ -39,8 +41,19 @@ class PartRepo(tableName: String): PartDao {
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
-                        val bytes = file.readBytes()
-                        partImages.add(Base64.getEncoder().encodeToString(bytes))
+                        //adminAppCode
+                        val compressor = Deflater()
+                        compressor.setLevel(Deflater.BEST_COMPRESSION)
+                        compressor.setInput(file.readBytes())
+                        compressor.finish()
+                        val bos = ByteArrayOutputStream(file.readBytes().size)
+                        val buf = ByteArray(1024)
+                        while (!compressor.finished()) {
+                            val count = compressor.deflate(buf)
+                            bos.write(buf, 0, count)
+                        }
+                        bos.close()
+                        partImages.add(bos.toByteArray().contentToString())
                     }
                     if(i==imagePartArray.lastIndex){
                         DatabaseFactory.dbQuery {
@@ -88,8 +101,19 @@ class PartRepo(tableName: String): PartDao {
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
-                        val bytes = file.readBytes()
-                        partImages.add(Base64.getEncoder().encodeToString(bytes))
+                        //adminAppCode
+                        val compressor = Deflater()
+                        compressor.setLevel(Deflater.BEST_COMPRESSION)
+                        compressor.setInput(file.readBytes())
+                        compressor.finish()
+                        val bos = ByteArrayOutputStream(file.readBytes().size)
+                        val buf = ByteArray(1024)
+                        while (!compressor.finished()) {
+                            val count = compressor.deflate(buf)
+                            bos.write(buf, 0, count)
+                        }
+                        bos.close()
+                        partImages.add(bos.toByteArray().contentToString())
                     }
                     if(i==imagePartArray.lastIndex){
                         DatabaseFactory.dbQuery {
@@ -120,29 +144,32 @@ class PartRepo(tableName: String): PartDao {
             }.singleOrNull()
         }
 
-    override suspend fun getAllParts(): List<Part> =
-        DatabaseFactory.dbQuery {
+    override suspend fun getAllParts(): List<HashMap<String,String>>{
+        val partHashMap = ArrayList<HashMap<String,String>>()
+        val rawList = DatabaseFactory.dbQuery {
             partTable.selectAll().mapNotNull {
                 rowToPart(it)
             }
         }
+        for(rawPart in rawList){
+            val imageList = rawPart.partImages.split(";")
+            val part = HashMap<String,String>()
+            part["partId"] = rawPart.partId.toString()
+            part["partName"] = rawPart.partName
+            part["partImage"] = imageList[0]
+            partHashMap.add(part)
+        }
+        return partHashMap
+    }
 
     private fun rowToPart(row: ResultRow?): Part? {
         if(row == null)
             return null
 
-        val path = "./build/resources/main/static/"
-        val partImages = HashMap<String,ByteArray>()
-        val imageNameList = row[partTable.partImages].split(",")
-        for(image in imageNameList){
-            val imageFile = File("$path$image.png")
-            partImages[image] = imageFile.readBytes()
-        }
-
         return Part(
             partId = row[partTable.partId],
             partName = row[partTable.partName],
-            partImages = partImages,
+            partImages = row[partTable.partImages],
             partDetails = row[partTable.partDetails]
         )
     }

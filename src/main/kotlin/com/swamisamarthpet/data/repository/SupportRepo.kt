@@ -39,6 +39,7 @@ class SupportRepo(): SupportDao {
 
     override suspend fun sendMessage(userId: String, message: String, dateAndTime: String, messageFrom: String): Int {
         val userMessagesTable = UserMessagesTable(userId)
+        var messageId = 0
         DatabaseFactory.dbQuery {
             userMessagesTable.insert { user ->
                 user[userMessagesTable.message] = message
@@ -46,7 +47,12 @@ class SupportRepo(): SupportDao {
                 user[userMessagesTable.messageFrom] = messageFrom
             }
         }
-        return 1
+        DatabaseFactory.dbQuery {
+            userMessagesTable.selectAll().mapNotNull {
+                messageId = it[userMessagesTable.messageId]
+            }
+        }
+        return messageId
     }
 
     override suspend fun getAllMessages(userId: String): List<Message> {

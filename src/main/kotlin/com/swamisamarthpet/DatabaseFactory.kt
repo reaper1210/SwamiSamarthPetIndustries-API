@@ -1,6 +1,7 @@
 package com.swamisamarthpet
 
 import com.swamisamarthpet.data.tables.AllCategoriesTable
+import com.swamisamarthpet.data.tables.RegisteredUsersTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,7 @@ object DatabaseFactory {
         Database.connect(hikari())
         transaction {
             SchemaUtils.create(AllCategoriesTable)
+            SchemaUtils.create(RegisteredUsersTable)
         }
     }
 

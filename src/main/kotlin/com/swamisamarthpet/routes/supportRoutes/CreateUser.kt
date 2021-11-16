@@ -16,7 +16,7 @@ fun Route.createUser(){
 
         try{
             val result = SupportRepo().createUser(userName,phoneNumber)
-            call.respond(HttpStatusCode.OK,result)
+            call.respond(HttpStatusCode.OK,result.userId)
         }
         catch (e:Throwable){
             call.respondText(e.message.toString())

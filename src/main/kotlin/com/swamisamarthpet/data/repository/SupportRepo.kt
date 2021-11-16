@@ -2,13 +2,14 @@ package com.swamisamarthpet.data.repository
 
 import com.swamisamarthpet.DatabaseFactory
 import com.swamisamarthpet.data.dao.SupportDao
+import com.swamisamarthpet.data.model.Message
 import com.swamisamarthpet.data.model.User
-import com.swamisamarthpet.data.tables.AllCategoriesTable
-import com.swamisamarthpet.data.tables.PartTable
 import com.swamisamarthpet.data.tables.RegisteredUsersTable
-import com.swamisamarthpet.data.tables.UserTable
+import com.swamisamarthpet.data.tables.UserMessagesTable
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
@@ -23,10 +24,62 @@ class SupportRepo(): SupportDao {
                 user[RegisteredUsersTable.phoneNumber] = phoneNumber
             }
         }
-        val table = UserTable(userId)
+        val table = UserMessagesTable(userId)
         transaction{
             SchemaUtils.create(table)
         }
         return User(userId,userName,phoneNumber)
     }
+
+    override suspend fun getAllUsers(): List<User> = DatabaseFactory.dbQuery {
+        RegisteredUsersTable.selectAll().mapNotNull {
+            rowToCategoryUser(it)
+        }
+    }
+
+    override suspend fun sendMessage(userId: String, message: String, dateAndTime: String, messageFrom: String): Message {
+        val userMessagesTable = UserMessagesTable(userId)
+        DatabaseFactory.dbQuery {
+            userMessagesTable.insert { user ->
+                user[userMessagesTable.message] = message
+                user[userMessagesTable.dateAndTime] = dateAndTime
+                user[userMessagesTable.messageFrom] = messageFrom
+            }
+        }
+        return Message(message,dateAndTime,messageFrom)
+    }
+
+    override suspend fun getAllMessages(userId: String): List<Message> {
+        val userMessagesTable = UserMessagesTable(userId)
+        val result = DatabaseFactory.dbQuery {
+            userMessagesTable.selectAll().mapNotNull {
+                rowToCategoryMessage(it,userId)
+            }
+        }
+        return result
+    }
+
+    private fun rowToCategoryUser(row: ResultRow?): User? {
+        if(row == null)
+            return null
+
+        return User(
+            userId = row[RegisteredUsersTable.userId],
+            userName = row[RegisteredUsersTable.userName],
+            phoneNumber = row[RegisteredUsersTable.phoneNumber]
+        )
+    }
+
+    private fun rowToCategoryMessage(row: ResultRow?, userId:String): Message? {
+        val table = UserMessagesTable(userId)
+        if(row == null)
+            return null
+
+        return Message(
+            message = row[table.message],
+            dateAndTime = row[table.dateAndTime],
+            messageFrom = row[table.messageFrom]
+        )
+    }
+
 }

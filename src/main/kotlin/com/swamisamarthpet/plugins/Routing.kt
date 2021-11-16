@@ -12,6 +12,9 @@ import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllPartImages
 import com.swamisamarthpet.routes.machineRoutes.*
 import com.swamisamarthpet.routes.partRoutes.*
 import com.swamisamarthpet.routes.supportRoutes.createUser
+import com.swamisamarthpet.routes.supportRoutes.getAllMessages
+import com.swamisamarthpet.routes.supportRoutes.getAllUsers
+import com.swamisamarthpet.routes.supportRoutes.sendMessage
 import com.swamisamarthpet.routes.uploadImage
 import io.ktor.routing.*
 import io.ktor.http.content.*
@@ -51,6 +54,9 @@ fun Application.configureRouting() {
         downloadAllPartImages()
 
         createUser()
+        getAllUsers()
+        sendMessage()
+        getAllMessages()
 
         static {
             resources("static")

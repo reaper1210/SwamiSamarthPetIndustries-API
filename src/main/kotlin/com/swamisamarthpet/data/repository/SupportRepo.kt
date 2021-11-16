@@ -37,7 +37,7 @@ class SupportRepo(): SupportDao {
         }
     }
 
-    override suspend fun sendMessage(userId: String, message: String, dateAndTime: String, messageFrom: String): Message {
+    override suspend fun sendMessage(userId: String, message: String, dateAndTime: String, messageFrom: String): Int {
         val userMessagesTable = UserMessagesTable(userId)
         DatabaseFactory.dbQuery {
             userMessagesTable.insert { user ->
@@ -46,7 +46,7 @@ class SupportRepo(): SupportDao {
                 user[userMessagesTable.messageFrom] = messageFrom
             }
         }
-        return Message(message,dateAndTime,messageFrom)
+        return 1
     }
 
     override suspend fun getAllMessages(userId: String): List<Message> {
@@ -76,6 +76,7 @@ class SupportRepo(): SupportDao {
             return null
 
         return Message(
+            messageId = row[table.messageId],
             message = row[table.message],
             dateAndTime = row[table.dateAndTime],
             messageFrom = row[table.messageFrom]

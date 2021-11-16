@@ -18,7 +18,7 @@ interface SupportDao {
         message:String,
         dateAndTime:String,
         messageFrom:String
-    ): Message
+    ): Int
 
     suspend fun getAllMessages(
         userId:String

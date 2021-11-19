@@ -24,4 +24,8 @@ interface SupportDao {
         userId:String
     ):List<Message>
 
+    suspend fun sendMsg(
+        msg:String
+    )
+
 }

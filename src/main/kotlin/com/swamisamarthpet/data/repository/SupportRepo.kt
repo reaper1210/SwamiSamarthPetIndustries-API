@@ -65,6 +65,10 @@ class SupportRepo(): SupportDao {
         return result
     }
 
+    override suspend fun sendMsg(msg: String) {
+
+    }
+
     private fun rowToCategoryUser(row: ResultRow?): User? {
         if(row == null)
             return null

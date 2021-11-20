@@ -2,10 +2,12 @@ package com.swamisamarthpet.data.repository
 
 import com.swamisamarthpet.DatabaseFactory
 import com.swamisamarthpet.data.dao.SupportDao
+import com.swamisamarthpet.data.model.Member
 import com.swamisamarthpet.data.model.Message
 import com.swamisamarthpet.data.model.User
 import com.swamisamarthpet.data.tables.RegisteredUsersTable
 import com.swamisamarthpet.data.tables.UserMessagesTable
+import io.ktor.http.cio.websocket.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
@@ -37,7 +39,11 @@ class SupportRepo(): SupportDao {
         }
     }
 
-    override suspend fun sendMessage(userId: String, message: String, dateAndTime: String, messageFrom: String): Int {
+    override suspend fun onJoin(userId: String, sessionId: String, socket: WebSocketSession): Member {
+        return Member(userId,sessionId,socket)
+    }
+
+    override suspend fun sendMessage(userId: String, message: String, dateAndTime: String, messageFrom: String,member:Member): Int {
         val userMessagesTable = UserMessagesTable(userId)
         var messageId = 0
         DatabaseFactory.dbQuery {
@@ -47,6 +53,7 @@ class SupportRepo(): SupportDao {
                 user[userMessagesTable.messageFrom] = messageFrom
             }
         }
+        member.socket.send(Frame.Text(message))
         DatabaseFactory.dbQuery {
             userMessagesTable.selectAll().mapNotNull {
                 messageId = it[userMessagesTable.messageId]
@@ -65,9 +72,6 @@ class SupportRepo(): SupportDao {
         return result
     }
 
-    override suspend fun sendMsg(msg: String) {
-
-    }
 
     private fun rowToCategoryUser(row: ResultRow?): User? {
         if(row == null)

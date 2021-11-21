@@ -1,6 +1,7 @@
 package com.swamisamarthpet.routes.supportRoutes
 
 import com.swamisamarthpet.API_VERSION
+import com.swamisamarthpet.data.model.Member
 import com.swamisamarthpet.data.repository.SupportRepo
 import io.ktor.application.*
 import io.ktor.http.*
@@ -20,8 +21,8 @@ fun Route.sendMessage(){
         val messageFrom = call.parameters["messageFrom"]?: return@webSocket call.respond(HttpStatusCode.Unauthorized,"Missing Message From")
 
         try{
-            val member = SupportRepo().onJoin(userId,sessionId,socket)
-            val result = SupportRepo().sendMessage(userId, message, dateAndTime, messageFrom,member)
+//            val member = SupportRepo().onJoin(userId,sessionId,socket)
+            SupportRepo().sendMessage(userId, message, dateAndTime, messageFrom, Member(userId,sessionId,socket))
 //            call.respond(HttpStatusCode.OK,result)
         }
         catch (e:Throwable){

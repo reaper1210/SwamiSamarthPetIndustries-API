@@ -23,6 +23,12 @@ interface SupportDao {
         member:Member
     ): Int
 
+    suspend fun connectUser(
+        userId: String,
+        sessionId: String,
+        socket: WebSocketSession)
+    :Member
+
     suspend fun getAllMessages(
         userId:String
     ):List<Message>

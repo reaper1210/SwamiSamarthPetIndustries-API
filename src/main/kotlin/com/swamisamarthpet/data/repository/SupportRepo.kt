@@ -43,6 +43,10 @@ class SupportRepo(): SupportDao {
         return Member(userId,sessionId,socket)
     }
 
+    override suspend fun connectUser(userId: String, sessionId: String, socket: WebSocketSession): Member {
+        return onJoin(userId, sessionId, socket)
+    }
+
     override suspend fun sendMessage(userId: String, message: String, dateAndTime: String, messageFrom: String,member:Member): Int {
         val userMessagesTable = UserMessagesTable(userId)
         var messageId = 0

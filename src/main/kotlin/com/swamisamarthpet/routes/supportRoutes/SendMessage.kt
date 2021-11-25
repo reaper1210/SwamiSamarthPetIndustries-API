@@ -1,6 +1,7 @@
 package com.swamisamarthpet.routes.supportRoutes
 
 import com.swamisamarthpet.API_VERSION
+import com.swamisamarthpet.Constants
 import com.swamisamarthpet.data.model.Member
 import com.swamisamarthpet.data.repository.SupportRepo
 import io.ktor.application.*
@@ -14,11 +15,11 @@ import io.ktor.websocket.*
 fun Route.sendMessage(){
     webSocket("$API_VERSION/sendMessage"){
         val sessionId = generateSessionId()
-        val socket = this
         val userId = call.parameters["userId"]?: return@webSocket call.respond(HttpStatusCode.Unauthorized,"Missing User Id")
         val message = call.parameters["message"]?: return@webSocket call.respond(HttpStatusCode.Unauthorized,"Missing Message")
         val dateAndTime = call.parameters["dateAndTime"]?: return@webSocket call.respond(HttpStatusCode.Unauthorized,"Missing Date And Time")
         val messageFrom = call.parameters["messageFrom"]?: return@webSocket call.respond(HttpStatusCode.Unauthorized,"Missing Message From")
+        val socket = Constants.socketHashMap[userId]?.socket ?: return@webSocket call.respond(HttpStatusCode.Unauthorized,"Socket Not Found")
 
         try{
 //            val member = SupportRepo().onJoin(userId,sessionId,socket)

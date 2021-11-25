@@ -1,6 +1,7 @@
 package com.swamisamarthpet.routes.supportRoutes
 
 import com.swamisamarthpet.API_VERSION
+import com.swamisamarthpet.Constants
 import com.swamisamarthpet.data.model.Member
 import com.swamisamarthpet.data.repository.SupportRepo
 import io.ktor.http.*
@@ -15,6 +16,7 @@ fun Route.connectUser(){
         val sessionId = generateSessionId()
         val socket = this
         val userId = call.parameters["userId"]?: return@webSocket call.respond(HttpStatusCode.Unauthorized,"Missing User Id")
-        SupportRepo().connectUser(userId,sessionId,socket)
+        val member = SupportRepo().connectUser(userId,sessionId,socket)
+        Constants.socketHashMap[userId] = member
     }
 }

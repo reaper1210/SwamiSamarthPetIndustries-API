@@ -14,7 +14,7 @@ import io.ktor.websocket.*
 fun Route.connectUser(){
     webSocket("/$API_VERSION/connectUser") {
         val sessionId = generateSessionId()
-        val socket = this
+        val socket = this as WebSocketSession
         val userId = call.parameters["userId"]?: return@webSocket call.respond(HttpStatusCode.Unauthorized,"Missing User Id")
         val member = SupportRepo().connectUser(userId,sessionId,socket)
         Constants.socketHashMap[userId] = member

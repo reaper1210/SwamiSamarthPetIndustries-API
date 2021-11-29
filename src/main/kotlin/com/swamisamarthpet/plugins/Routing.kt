@@ -52,10 +52,6 @@ fun Application.configureRouting() {
 
         createUser()
         getAllUsers()
-        sendMessage()
-        getAllMessages()
-
-        connectUser()
 
         static {
             resources("static")

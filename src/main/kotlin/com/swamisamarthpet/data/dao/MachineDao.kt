@@ -9,7 +9,8 @@ interface MachineDao {
         machineName: String,
         multiPart: MultiPartData,
         machineDetails: String,
-        machinePdf: String
+        machinePdf: String,
+        machinePopularity: Int
     ): Int
 
     suspend fun deleteMachine(
@@ -20,7 +21,8 @@ interface MachineDao {
         machineId: Int,
         multiPart: MultiPartData,
         machineDetails: String,
-        machinePdf: String
+        machinePdf: String,
+        machinePopularity: Int
     ): Int
 
     suspend fun getMachineById(

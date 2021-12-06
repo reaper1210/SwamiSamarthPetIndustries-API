@@ -8,5 +8,6 @@ data class Machine(
     val machineName: String,
     val machineImages: String,
     val machineDetails: String,
-    val machinePdf: String
+    val machinePdf: String,
+    val machinePopularity: Int
 )

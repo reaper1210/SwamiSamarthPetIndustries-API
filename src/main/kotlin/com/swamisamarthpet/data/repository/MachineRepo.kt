@@ -18,30 +18,32 @@ class MachineRepo(tableName: String): MachineDao {
 
     private val machineTable = MachineTable(tableName)
 
-    override suspend fun insertMachine(machineName: String, multiPart: MultiPartData, machineDetails: String, machinePdf: String, machinePopularity: Int): Int =
+    override suspend fun insertMachine(machineName: String, multiPart: MultiPartData, machineDetails: String, machinePopularity: Int): Int =
 
         try {
-            var i = 1
-            val array = arrayListOf<String>()
-            val imagePartArray = arrayListOf<PartData>()
+            var machinePdf = ""
             val machineImages = arrayListOf<String>()
+            val multiPartList = arrayListOf<PartData>()
             multiPart.forEachPart {
-                if(it is PartData.FileItem) {
-                    array.add(machineName+i)
-                    imagePartArray.add(it)
-                    i++
+                if(it is PartData.FileItem){
+                    multiPartList.add(it)
                 }
             }
 
-            i = 0
-            for(part in imagePartArray){
+            multiPartList.forEachIndexed { index, part->
                 if(part is PartData.FileItem) {
-                    val name = array[i]
-                    val file = File("./build/resources/main/static/$name.png")
+                    val file = if(index!=0){
+                        File("./build/resources/main/static/${machineName}${index}.png")
+                    }
+                    else{
+                        File("./build/resources/main/static/${machineName}Pdf.pdf")
+                    }
+
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
+
                         //adminAppCode
                         val compressor = Deflater()
                         compressor.setLevel(Deflater.BEST_COMPRESSION)
@@ -54,9 +56,16 @@ class MachineRepo(tableName: String): MachineDao {
                             bos.write(buf, 0, count)
                         }
                         bos.close()
-                        machineImages.add(bos.toByteArray().contentToString())
+
+                        if(index!=0){
+                            machineImages.add(bos.toByteArray().contentToString())
+                        }
+                        else{
+                            machinePdf = bos.toByteArray().contentToString()
+                        }
+
                     }
-                    if(i==imagePartArray.lastIndex){
+                    if(index==multiPartList.lastIndex){
                         DatabaseFactory.dbQuery {
                             machineTable.insert { machine ->
                                 machine[machineTable.machineName] = machineName
@@ -68,7 +77,6 @@ class MachineRepo(tableName: String): MachineDao {
                         }
                     }
                 }
-                i++
                 part.dispose()
             }
 
@@ -86,30 +94,32 @@ class MachineRepo(tableName: String): MachineDao {
             machineTable.deleteWhere { machineTable.machineId.eq(machineId) }
         }
 
-    override suspend fun updateMachine(machineId: Int,multiPart: MultiPartData, machineDetails: String, machinePdf: String, machinePopularity: Int): Int =
+    override suspend fun updateMachine(machineId: Int,multiPart: MultiPartData, machineDetails: String, machinePopularity: Int): Int =
         try{
             val machineName = getMachineById(machineId)?.machineName
-            var i = 1
-            val array = arrayListOf<String>()
-            val imagePartArray = arrayListOf<PartData>()
+            var machinePdf = ""
+            val machineImages = arrayListOf<String>()
+            val multiPartList = arrayListOf<PartData>()
             multiPart.forEachPart {
-                if(it is PartData.FileItem) {
-                    array.add(machineName+i)
-                    imagePartArray.add(it)
-                    i++
+                if(it is PartData.FileItem){
+                    multiPartList.add(it)
                 }
             }
-            val machineImages = arrayListOf<String>()
 
-            i = 0
-            for(part in imagePartArray){
+            multiPartList.forEachIndexed { index, part->
                 if(part is PartData.FileItem) {
-                    val name = array[i]
-                    val file = File("./build/resources/main/static/$name.png")
+                    val file = if(index!=0){
+                        File("./build/resources/main/static/${machineName}${index}.png")
+                    }
+                    else{
+                        File("./build/resources/main/static/${machineName}Pdf.pdf")
+                    }
+
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {
                             its.copyTo(it)
                         }
+
                         //adminAppCode
                         val compressor = Deflater()
                         compressor.setLevel(Deflater.BEST_COMPRESSION)
@@ -122,25 +132,31 @@ class MachineRepo(tableName: String): MachineDao {
                             bos.write(buf, 0, count)
                         }
                         bos.close()
-                        machineImages.add(bos.toByteArray().contentToString())
 
-                        if(i==imagePartArray.lastIndex){
-                            DatabaseFactory.dbQuery {
-                                machineTable.update({
-                                    machineTable.machineId.eq(machineId)
-                                }){ statement ->
-                                    statement[machineTable.machineImages] = machineImages.joinToString(";")
-                                    statement[machineTable.machineDetails] = machineDetails
-                                    statement[machineTable.machinePdf] = machinePdf
-                                    statement[machineTable.machinePopularity] = machinePopularity
-                                }
+                        if(index!=0){
+                            machineImages.add(bos.toByteArray().contentToString())
+                        }
+                        else{
+                            machinePdf = bos.toByteArray().contentToString()
+                        }
+
+                    }
+                    if(index==multiPartList.lastIndex){
+                        DatabaseFactory.dbQuery {
+                            machineTable.update({
+                                machineTable.machineId.eq(machineId)
+                            }){ statement ->
+                                statement[machineTable.machineImages] = machineImages.joinToString(";")
+                                statement[machineTable.machineDetails] = machineDetails
+                                statement[machineTable.machinePdf] = machinePdf
+                                statement[machineTable.machinePopularity] = machinePopularity
                             }
                         }
                     }
                 }
-                i++
                 part.dispose()
             }
+
             1
         }catch (e: Throwable){
             0

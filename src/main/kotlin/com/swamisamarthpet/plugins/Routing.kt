@@ -52,6 +52,7 @@ fun Application.configureRouting() {
 
         createUser()
         getAllUsers()
+        
 
         static {
             resources("static")

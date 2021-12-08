@@ -9,7 +9,6 @@ interface MachineDao {
         machineName: String,
         multiPart: MultiPartData,
         machineDetails: String,
-        machinePdf: String,
         machinePopularity: Int
     ): Int
 
@@ -21,7 +20,6 @@ interface MachineDao {
         machineId: Int,
         multiPart: MultiPartData,
         machineDetails: String,
-        machinePdf: String,
         machinePopularity: Int
     ): Int
 

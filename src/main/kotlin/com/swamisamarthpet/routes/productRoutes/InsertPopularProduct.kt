@@ -9,7 +9,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
-fun Route.addPopularProduct(){
+fun Route.insertPopularProduct(){
     post("$API_VERSION/insertPopularProduct"){
 
         val parameters = call.receiveParameters()

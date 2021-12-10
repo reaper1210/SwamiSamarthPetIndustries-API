@@ -35,7 +35,6 @@ fun Route.insertCategory() {
             }
         }
         else call.respondText("Invalid Password")
-
     }
 }
 

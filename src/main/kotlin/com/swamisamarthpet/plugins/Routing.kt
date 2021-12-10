@@ -11,6 +11,7 @@ import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllMachineImages
 import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllPartImages
 import com.swamisamarthpet.routes.machineRoutes.*
 import com.swamisamarthpet.routes.partRoutes.*
+import com.swamisamarthpet.routes.productRoutes.addPopularProduct
 import com.swamisamarthpet.routes.supportRoutes.*
 import com.swamisamarthpet.routes.uploadImage
 import io.ktor.routing.*
@@ -52,7 +53,8 @@ fun Application.configureRouting() {
 
         createUser()
         getAllUsers()
-        
+
+        addPopularProduct()
 
         static {
             resources("static")

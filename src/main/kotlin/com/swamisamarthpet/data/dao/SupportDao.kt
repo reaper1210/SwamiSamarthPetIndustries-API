@@ -10,5 +10,4 @@ interface SupportDao {
     ): User
 
     suspend fun getAllUsers() : List<User>
-
 }

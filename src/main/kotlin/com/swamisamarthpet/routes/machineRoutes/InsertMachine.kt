@@ -23,13 +23,12 @@ fun Route.insertMachine(){
         val multiPart = call.receiveMultipart()
         val machineName = parameters["machineName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Name")
         val machineDetails = parameters["machineDetails"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Details")
-        val machinePopularity = parameters["machinePopularity"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Popularity")
         val categoryName = parameters["categoryName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Category Name")
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
             try{
-                val result = MachineRepo(categoryName).insertMachine(machineName,multiPart,machineDetails,machinePopularity.toInt())
+                val result = MachineRepo(categoryName).insertMachine(machineName,multiPart,machineDetails)
                 call.respond(HttpStatusCode.OK,result)
             }catch (e:Throwable){
                 call.respondText(e.message.toString())

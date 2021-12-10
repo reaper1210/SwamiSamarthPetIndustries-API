@@ -18,7 +18,7 @@ class MachineRepo(tableName: String): MachineDao {
 
     private val machineTable = MachineTable(tableName)
 
-    override suspend fun insertMachine(machineName: String, multiPart: MultiPartData, machineDetails: String, machinePopularity: Int): Int =
+    override suspend fun insertMachine(machineName: String, multiPart: MultiPartData, machineDetails: String): Int =
 
         try {
             var machinePdf = ""
@@ -72,7 +72,6 @@ class MachineRepo(tableName: String): MachineDao {
                                 machine[machineTable.machineImages] = machineImages.joinToString(";")
                                 machine[machineTable.machineDetails] = machineDetails
                                 machine[machineTable.machinePdf] = machinePdf
-                                machine[machineTable.machinePopularity] = machinePopularity
                             }
                         }
                     }
@@ -94,7 +93,7 @@ class MachineRepo(tableName: String): MachineDao {
             machineTable.deleteWhere { machineTable.machineId.eq(machineId) }
         }
 
-    override suspend fun updateMachine(machineId: Int,multiPart: MultiPartData, machineDetails: String, machinePopularity: Int): Int =
+    override suspend fun updateMachine(machineId: Int,multiPart: MultiPartData, machineDetails: String): Int =
         try{
             val machineName = getMachineById(machineId)?.machineName
             var machinePdf = ""
@@ -149,7 +148,6 @@ class MachineRepo(tableName: String): MachineDao {
                                 statement[machineTable.machineImages] = machineImages.joinToString(";")
                                 statement[machineTable.machineDetails] = machineDetails
                                 statement[machineTable.machinePdf] = machinePdf
-                                statement[machineTable.machinePopularity] = machinePopularity
                             }
                         }
                     }
@@ -184,7 +182,6 @@ class MachineRepo(tableName: String): MachineDao {
             machine["machineId"] = rawMachine.machineId.toString()
             machine["machineName"] = rawMachine.machineName
             machine["machineImage"] = imageList[0]
-            machine["machinePopularity"] = rawMachine.machinePopularity.toString()
             machineHashMap.add(machine)
         }
         return machineHashMap
@@ -199,8 +196,7 @@ class MachineRepo(tableName: String): MachineDao {
             machineName = row[machineTable.machineName],
             machineImages = row[machineTable.machineImages],
             machineDetails = row[machineTable.machineDetails],
-            machinePdf = row[machineTable.machinePdf],
-            machinePopularity = row[machineTable.machinePopularity]
+            machinePdf = row[machineTable.machinePdf]
         )
     }
 

@@ -28,48 +28,54 @@ class PopularRepo:PopularDao {
 
             multiPartList.forEachIndexed { index, part ->
                 if (part is PartData.FileItem) {
-                    val file = if (index != 0) {
-                        File("./build/resources/main/static/${productName}${index}.png")
-                    } else {
-                        File("./build/resources/main/static/${productName}Pdf.pdf")
+                    if(!((productType == "part") and (index == 0))){
+                        println("if: $productType and index is $index")
+//                        val file = if (index != 0) {
+//                            File("./build/resources/main/static/${productName}${index}.png")
+//                        } else {
+//                            File("./build/resources/main/static/${productName}Pdf.pdf")
+//                        }
+//
+//                        part.streamProvider().use { its ->
+//                            file.outputStream().buffered().use {
+//                                its.copyTo(it)
+//                            }
+//
+//                            //adminAppCode
+//                            val compressor = Deflater()
+//                            compressor.setLevel(Deflater.BEST_COMPRESSION)
+//                            compressor.setInput(file.readBytes())
+//                            compressor.finish()
+//                            val bos = ByteArrayOutputStream(file.readBytes().size)
+//                            val buf = ByteArray(1024)
+//                            while (!compressor.finished()) {
+//                                val count = compressor.deflate(buf)
+//                                bos.write(buf, 0, count)
+//                            }
+//                            bos.close()
+//
+//                            if (index != 0) {
+//                                productImages.add(bos.toByteArray().contentToString())
+//                            } else {
+//                                productPdf = bos.toByteArray().contentToString()
+//                            }
+//
+//                        }
+//                        if (index == multiPartList.lastIndex) {
+//                            DatabaseFactory.dbQuery {
+//                                PopularProductsTable.insert { product ->
+//                                    product[PopularProductsTable.productName] = productName
+//                                    product[PopularProductsTable.productImages] = productImages.joinToString(";")
+//                                    product[PopularProductsTable.productDetails] = productDetails
+//                                    product[PopularProductsTable.productPdf] = productPdf
+//                                    product[PopularProductsTable.productPopularity] = productPopularity
+//                                    product[PopularProductsTable.productType] = productType
+//                                }
+//                            }
+//                        }
                     }
-
-                    part.streamProvider().use { its ->
-                        file.outputStream().buffered().use {
-                            its.copyTo(it)
-                        }
-
-                        //adminAppCode
-                        val compressor = Deflater()
-                        compressor.setLevel(Deflater.BEST_COMPRESSION)
-                        compressor.setInput(file.readBytes())
-                        compressor.finish()
-                        val bos = ByteArrayOutputStream(file.readBytes().size)
-                        val buf = ByteArray(1024)
-                        while (!compressor.finished()) {
-                            val count = compressor.deflate(buf)
-                            bos.write(buf, 0, count)
-                        }
-                        bos.close()
-
-                        if (index != 0) {
-                            productImages.add(bos.toByteArray().contentToString())
-                        } else {
-                            productPdf = bos.toByteArray().contentToString()
-                        }
-
-                    }
-                    if (index == multiPartList.lastIndex) {
-                        DatabaseFactory.dbQuery {
-                            PopularProductsTable.insert { product ->
-                                product[PopularProductsTable.productName] = productName
-                                product[PopularProductsTable.productImages] = productImages.joinToString(";")
-                                product[PopularProductsTable.productDetails] = productDetails
-                                product[PopularProductsTable.productPdf] = productPdf
-                                product[PopularProductsTable.productPopularity] = productPopularity
-                                product[PopularProductsTable.productType] = productType
-                            }
-                        }
+                    else{
+                        println("Else: $productType and index is $index")
                     }
                 }
                 part.dispose()
@@ -166,7 +172,7 @@ class PopularRepo:PopularDao {
 
         val machineHashMap = ArrayList<HashMap<String,String>>()
         val rawList = DatabaseFactory.dbQuery{
-            PopularProductsTable.selectAll().orderBy(PopularProductsTable.productPopularity to SortOrder.DESC).mapNotNull {
+            PopularProductsTable.selectAll().mapNotNull {
                 rowToMachine(it)
             }
         }

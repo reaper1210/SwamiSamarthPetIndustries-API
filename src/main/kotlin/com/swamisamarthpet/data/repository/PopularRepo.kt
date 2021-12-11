@@ -166,7 +166,7 @@ class PopularRepo:PopularDao {
 
         val machineHashMap = ArrayList<HashMap<String,String>>()
         val rawList = DatabaseFactory.dbQuery{
-            PopularProductsTable.selectAll().mapNotNull {
+            PopularProductsTable.selectAll().orderBy(PopularProductsTable.productPopularity).mapNotNull {
                 rowToMachine(it)
             }
         }

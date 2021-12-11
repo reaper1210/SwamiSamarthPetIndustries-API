@@ -11,6 +11,7 @@ import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllMachineImages
 import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllPartImages
 import com.swamisamarthpet.routes.machineRoutes.*
 import com.swamisamarthpet.routes.partRoutes.*
+import com.swamisamarthpet.routes.productRoutes.getAllPopularProducts
 import com.swamisamarthpet.routes.productRoutes.insertPopularProduct
 import com.swamisamarthpet.routes.supportRoutes.*
 import com.swamisamarthpet.routes.uploadImage
@@ -55,6 +56,7 @@ fun Application.configureRouting() {
         getAllUsers()
 
         insertPopularProduct()
+        getAllPopularProducts()
 
         static {
             resources("static")

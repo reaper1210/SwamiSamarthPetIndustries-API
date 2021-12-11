@@ -1,6 +1,5 @@
 package com.swamisamarthpet.data.dao
 
-import com.swamisamarthpet.data.model.Machine
 import com.swamisamarthpet.data.model.PopularProduct
 import io.ktor.http.content.*
 

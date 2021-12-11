@@ -1,5 +1,9 @@
 package com.swamisamarthpet.plugins
 
+import com.swamisamarthpet.routes.bannerRoutes.deleteBanner
+import com.swamisamarthpet.routes.bannerRoutes.getAllBanners
+import com.swamisamarthpet.routes.bannerRoutes.insertBanner
+import com.swamisamarthpet.routes.bannerRoutes.updateBanner
 import com.swamisamarthpet.routes.categoryRoutes.deleteCategory
 import com.swamisamarthpet.routes.categoryRoutes.getAllCategories
 import com.swamisamarthpet.routes.categoryRoutes.getCategoryById
@@ -11,9 +15,7 @@ import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllMachineImages
 import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllPartImages
 import com.swamisamarthpet.routes.machineRoutes.*
 import com.swamisamarthpet.routes.partRoutes.*
-import com.swamisamarthpet.routes.productRoutes.getAllPopularProducts
-import com.swamisamarthpet.routes.productRoutes.getPopularProductById
-import com.swamisamarthpet.routes.productRoutes.insertPopularProduct
+import com.swamisamarthpet.routes.productRoutes.*
 import com.swamisamarthpet.routes.supportRoutes.*
 import com.swamisamarthpet.routes.uploadImage
 import io.ktor.routing.*
@@ -56,9 +58,16 @@ fun Application.configureRouting() {
         createUser()
         getAllUsers()
 
+        updatePopularProduct()
         insertPopularProduct()
+        deletePopularProduct()
         getAllPopularProducts()
         getPopularProductById()
+
+        insertBanner()
+        updateBanner()
+        deleteBanner()
+        getAllBanners()
 
         static {
             resources("static")

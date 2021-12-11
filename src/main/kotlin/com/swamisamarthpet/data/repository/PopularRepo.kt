@@ -2,12 +2,10 @@ package com.swamisamarthpet.data.repository
 
 import com.swamisamarthpet.DatabaseFactory
 import com.swamisamarthpet.data.dao.PopularDao
-import com.swamisamarthpet.data.model.Machine
 import com.swamisamarthpet.data.model.PopularProduct
 import com.swamisamarthpet.data.tables.PopularProductsTable
 import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.ArrayList
@@ -56,6 +54,9 @@ class PopularRepo:PopularDao {
                             bos.write(buf, 0, count)
                         }
                         bos.close()
+                        if(file.exists()){
+                            file.delete()
+                        }
 
                         if ((index == 0) and (productType=="machine")) {
                             productPdf = bos.toByteArray().contentToString()
@@ -164,7 +165,7 @@ class PopularRepo:PopularDao {
             PopularProductsTable.select{
                 PopularProductsTable.productId.eq(productId)
             }.map {
-                rowToMachine(it)
+                rowToPopularProduct(it)
             }.singleOrNull()!!
         }
 
@@ -173,7 +174,7 @@ class PopularRepo:PopularDao {
         val machineHashMap = ArrayList<HashMap<String,String>>()
         val rawList = DatabaseFactory.dbQuery{
             PopularProductsTable.selectAll().mapNotNull {
-                rowToMachine(it)
+                rowToPopularProduct(it)
             }
         }
         for(rawMachine in rawList){
@@ -190,7 +191,7 @@ class PopularRepo:PopularDao {
 
     }
 
-    private fun rowToMachine(row: ResultRow?): PopularProduct? {
+    private fun rowToPopularProduct(row: ResultRow?): PopularProduct? {
         if(row == null)
             return null
 

@@ -183,6 +183,7 @@ class PopularRepo:PopularDao {
             machine["productName"] = rawMachine.productName
             machine["productImage"] = imageList[0]
             machine["productPopularity"] = rawMachine.productPopularity.toString()
+            machine["productType"] = rawMachine.productType
             machineHashMap.add(machine)
         }
         return machineHashMap

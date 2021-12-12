@@ -1,6 +1,7 @@
 package com.swamisamarthpet
 
 import com.swamisamarthpet.data.tables.AllCategoriesTable
+import com.swamisamarthpet.data.tables.BannersTable
 import com.swamisamarthpet.data.tables.PopularProductsTable
 import com.swamisamarthpet.data.tables.RegisteredUsersTable
 import com.zaxxer.hikari.HikariConfig
@@ -20,6 +21,7 @@ object DatabaseFactory {
             SchemaUtils.create(AllCategoriesTable)
             SchemaUtils.create(RegisteredUsersTable)
             SchemaUtils.create(PopularProductsTable)
+            SchemaUtils.create(BannersTable)
         }
     }
 

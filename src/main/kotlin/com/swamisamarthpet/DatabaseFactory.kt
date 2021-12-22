@@ -1,15 +1,13 @@
 package com.swamisamarthpet
 
-import com.swamisamarthpet.data.tables.AllCategoriesTable
-import com.swamisamarthpet.data.tables.BannersTable
-import com.swamisamarthpet.data.tables.PopularProductsTable
-import com.swamisamarthpet.data.tables.RegisteredUsersTable
+import com.swamisamarthpet.data.tables.*
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
 
@@ -22,6 +20,14 @@ object DatabaseFactory {
             SchemaUtils.create(RegisteredUsersTable)
             SchemaUtils.create(PopularProductsTable)
             SchemaUtils.create(BannersTable)
+            SchemaUtils.create(RatingsTable)
+            RatingsTable.insert { ratings->
+                ratings[oneStars] = 0
+                ratings[twoStars] = 0
+                ratings[threeStars] = 0
+                ratings[fourStars] = 0
+                ratings[fiveStars] = 0
+            }
         }
     }
 

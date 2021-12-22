@@ -11,9 +11,8 @@ import io.ktor.routing.*
 fun Route.insertRating(){
     post("/$API_VERSION/insertRating") {
         val parameters = call.receive<Parameters>()
-        val rating = parameters["bannerId"]?.toInt() ?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing bannerId")
+        val rating = parameters["rating"]?.toInt() ?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing bannerId")
         if(rating < 6){
-            var ratingToUpdate = 0
             try{
                 val result = RatingRepo().insertRatings(rating)
                 call.respond(HttpStatusCode.OK,result)

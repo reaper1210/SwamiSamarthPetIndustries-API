@@ -16,6 +16,7 @@ import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllPartImages
 import com.swamisamarthpet.routes.machineRoutes.*
 import com.swamisamarthpet.routes.partRoutes.*
 import com.swamisamarthpet.routes.productRoutes.*
+import com.swamisamarthpet.routes.ratingRoutes.insertRating
 import com.swamisamarthpet.routes.supportRoutes.*
 import com.swamisamarthpet.routes.uploadImage
 import io.ktor.routing.*
@@ -68,6 +69,8 @@ fun Application.configureRouting() {
         updateBanner()
         deleteBanner()
         getAllBanners()
+
+        insertRating()
 
         static {
             resources("static")

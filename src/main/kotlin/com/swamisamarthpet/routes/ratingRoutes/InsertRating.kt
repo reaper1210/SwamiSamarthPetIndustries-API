@@ -9,7 +9,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 fun Route.insertRating(){
-    post("/$API_VERSION/insertRating") {
+    post("$API_VERSION/insertRating") {
         val parameters = call.receive<Parameters>()
         val rating = parameters["rating"]?.toInt() ?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing bannerId")
         if(rating < 6){

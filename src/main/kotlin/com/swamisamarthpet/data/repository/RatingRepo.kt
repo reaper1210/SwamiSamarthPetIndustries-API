@@ -43,7 +43,7 @@ class RatingRepo: RatingDao {
                 }
             }
         }
-        1
+        rating
     }catch (e:Exception){
         e.printStackTrace()
         0

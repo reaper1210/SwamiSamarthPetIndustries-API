@@ -8,5 +8,5 @@ interface RatingDao {
         rating:Int
     ):Int
 
-    suspend fun getRatings(): List<Rating>
+    suspend fun getRatings(): Rating
 }

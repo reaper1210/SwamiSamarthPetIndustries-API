@@ -9,8 +9,8 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 
 class RatingRepo: RatingDao {
-    override suspend fun insertRatings(rating: Int): Int {
-        val allRatings = RatingRepo().getRatings()[0]
+    override suspend fun insertRatings(rating: Int): Int = try {
+        val allRatings = RatingRepo().getRatings()
         DatabaseFactory.dbQuery {
             when(rating){
                 1->{
@@ -43,16 +43,19 @@ class RatingRepo: RatingDao {
                 }
             }
         }
-        return 1
+        1
+    }catch (e:Exception){
+        e.printStackTrace()
+        0
     }
 
-    override suspend fun getRatings(): List<Rating> {
+    override suspend fun getRatings(): Rating {
         val result=DatabaseFactory.dbQuery {
             RatingsTable.select { RatingsTable.ratingId eq 1 }.mapNotNull {
                 rowToRatings(it)
             }
         }
-        return result
+        return result[0]
     }
 
     private fun rowToRatings(row: ResultRow?): Rating? {

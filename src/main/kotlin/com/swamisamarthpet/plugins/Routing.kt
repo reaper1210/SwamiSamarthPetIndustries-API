@@ -16,6 +16,7 @@ import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllPartImages
 import com.swamisamarthpet.routes.machineRoutes.*
 import com.swamisamarthpet.routes.partRoutes.*
 import com.swamisamarthpet.routes.productRoutes.*
+import com.swamisamarthpet.routes.ratingRoutes.getRatings
 import com.swamisamarthpet.routes.ratingRoutes.insertRating
 import com.swamisamarthpet.routes.supportRoutes.*
 import com.swamisamarthpet.routes.uploadImage
@@ -71,6 +72,7 @@ fun Application.configureRouting() {
         getAllBanners()
 
         insertRating()
+        getRatings()
 
         static {
             resources("static")

@@ -18,13 +18,8 @@ fun Route.createUser(){
         try{
             val result = SupportRepo().createUser(userName,phoneNumber)
             call.respond(HttpStatusCode.OK,result)
-        }catch (pe: PSQLException){
-            try{
-                val result = SupportRepo().getUserByPhoneNumber(phoneNumber)
-                call.respond(HttpStatusCode.OK,result)
-            }catch (e:Throwable){
-                call.respondText(e.message.toString())
-            }
+        }catch (e:Throwable){
+            call.respondText(e.message.toString())
         }
 
     }

@@ -4,16 +4,20 @@ import com.swamisamarthpet.DatabaseFactory
 import com.swamisamarthpet.data.dao.SupportDao
 import com.swamisamarthpet.data.model.User
 import com.swamisamarthpet.data.tables.RegisteredUsersTable
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.response.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import org.postgresql.util.PSQLException
 import java.util.*
 
 class SupportRepo: SupportDao {
 
-    override suspend fun createUser(userName: String, phoneNumber: String): String {
+    override suspend fun createUser(userName: String, phoneNumber: String): String = try{
         val userId = UUID.randomUUID().toString()
         DatabaseFactory.dbQuery {
             RegisteredUsersTable.insert {user->
@@ -22,7 +26,9 @@ class SupportRepo: SupportDao {
                 user[RegisteredUsersTable.phoneNumber] = phoneNumber
             }
         }
-        return userId
+        userId
+    }catch (e: Exception){
+        getUserByPhoneNumber(phoneNumber)
     }
 
     override suspend fun getAllUsers(): List<User> = DatabaseFactory.dbQuery {

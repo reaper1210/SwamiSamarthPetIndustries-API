@@ -7,7 +7,11 @@ interface SupportDao {
     suspend fun createUser(
         userName:String,
         phoneNumber:String
-    ): User
+    ): String
+
+    suspend fun getUserByPhoneNumber(
+        phoneNumber: String
+    ): String
 
     suspend fun getAllUsers() : List<User>
 }

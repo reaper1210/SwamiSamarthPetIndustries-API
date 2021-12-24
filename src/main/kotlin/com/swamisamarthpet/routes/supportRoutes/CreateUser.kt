@@ -7,6 +7,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.postgresql.util.PSQLException
 
 fun Route.createUser(){
     post("$API_VERSION/createUser"){
@@ -16,10 +17,14 @@ fun Route.createUser(){
 
         try{
             val result = SupportRepo().createUser(userName,phoneNumber)
-            call.respond(HttpStatusCode.OK,result.userId)
-        }
-        catch (e:Throwable){
-            call.respondText(e.message.toString())
+            call.respond(HttpStatusCode.OK,result)
+        }catch (pe: PSQLException){
+            try{
+                val result = SupportRepo().getUserByPhoneNumber(phoneNumber)
+                call.respond(HttpStatusCode.OK,result)
+            }catch (e:Throwable){
+                call.respondText(e.message.toString())
+            }
         }
 
     }

@@ -24,9 +24,9 @@ fun Route.updatePopularProduct(){
                 val result = PopularRepo().updatePopularProduct(productId.toInt(),multiPartData,productDetails,productPopularity.toInt())
                 call.respond(HttpStatusCode.OK,result)
             } catch (e:Throwable){
-                call.respondText(e.message.toString())
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
             }
         }
-        else call.respondText("Invalid Password")
+        else call.respond(HttpStatusCode.Unauthorized,"Invalid Password")
     }
 }

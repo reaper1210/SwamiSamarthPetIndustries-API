@@ -14,9 +14,8 @@ fun Route.getAllPopularProducts(){
             val result = PopularRepo().getAllPopularProducts()
             call.respond(HttpStatusCode.OK,result)
         }catch (e: Throwable){
-            call.respond(e.message.toString())
+            call.respond(HttpStatusCode.InternalServerError, e.message.toString())
         }
-
 
     }
 

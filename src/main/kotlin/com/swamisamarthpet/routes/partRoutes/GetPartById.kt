@@ -18,7 +18,7 @@ fun Route.getPartById(){
             val result = PartRepo(machineName).getPartById(partId.toInt())
             call.respond(HttpStatusCode.OK,result!!)
         }catch (e: Throwable){
-            call.respond(e.message.toString())
+            call.respond(HttpStatusCode.InternalServerError, e.message.toString())
         }
 
     }

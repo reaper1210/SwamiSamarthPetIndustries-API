@@ -22,11 +22,11 @@ fun Route.updatePart(){
                 val result = PartRepo(machineName).updatePart(partId.toInt(),multiPart,partDetails,machineName)
                 call.respond(HttpStatusCode.OK,result)
             }catch(e: Throwable){
-                call.respond(e.message.toString())
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
             }
         }
         else{
-            call.respond("Invalid Password")
+            call.respond(HttpStatusCode.Unauthorized,"Invalid Password")
         }
 
     }

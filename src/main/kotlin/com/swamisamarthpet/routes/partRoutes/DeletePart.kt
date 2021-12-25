@@ -20,11 +20,11 @@ fun Route.deletePart(){
                 val result = PartRepo(machineName).deletePart(partId.toInt())
                 call.respond(HttpStatusCode.OK,result)
             }catch(e: Throwable){
-                call.respond(e.message.toString())
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
             }
         }
         else{
-            call.respond("Invalid Password")
+            call.respond(HttpStatusCode.Unauthorized,"Invalid Password")
         }
 
     }

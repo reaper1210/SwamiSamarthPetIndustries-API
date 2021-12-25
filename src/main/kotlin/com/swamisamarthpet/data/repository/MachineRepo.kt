@@ -191,6 +191,7 @@ class MachineRepo(tableName: String): MachineDao {
             machineId = row[machineTable.machineId],
             machineName = row[machineTable.machineName],
             machineImages = row[machineTable.machineImages],
+            youtubeVideoLink = row[machineTable.youtubeVideoLink],
             machineDetails = row[machineTable.machineDetails],
             machinePdf = row[machineTable.machinePdf]
         )

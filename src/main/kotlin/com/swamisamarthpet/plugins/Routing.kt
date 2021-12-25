@@ -10,7 +10,6 @@ import com.swamisamarthpet.routes.categoryRoutes.getCategoryById
 import com.swamisamarthpet.routes.categoryRoutes.updateCategory
 import com.swamisamarthpet.routes.categoryRoutes.insertCategory
 import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllCategoryImages
-import com.swamisamarthpet.routes.downloadImage
 import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllMachineImages
 import com.swamisamarthpet.routes.downloadImagesRoutes.downloadAllPartImages
 import com.swamisamarthpet.routes.machineRoutes.*
@@ -19,7 +18,6 @@ import com.swamisamarthpet.routes.productRoutes.*
 import com.swamisamarthpet.routes.ratingRoutes.getRatings
 import com.swamisamarthpet.routes.ratingRoutes.insertRating
 import com.swamisamarthpet.routes.supportRoutes.*
-import com.swamisamarthpet.routes.uploadImage
 import io.ktor.routing.*
 import io.ktor.http.content.*
 import io.ktor.application.*
@@ -51,8 +49,6 @@ fun Application.configureRouting() {
         getPartById()
         getAllParts()
 
-        uploadImage()
-        downloadImage()
         downloadAllCategoryImages()
         downloadAllMachineImages()
         downloadAllPartImages()

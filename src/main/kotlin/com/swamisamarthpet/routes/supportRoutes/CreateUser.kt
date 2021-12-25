@@ -19,7 +19,7 @@ fun Route.createUser(){
             val result = SupportRepo().createUser(userName,phoneNumber)
             call.respond(HttpStatusCode.OK,result)
         }catch (e:Throwable){
-            call.respondText(e.message.toString())
+            call.respond(HttpStatusCode.InternalServerError,e.message.toString())
         }
 
     }

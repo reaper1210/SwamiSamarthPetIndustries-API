@@ -14,7 +14,7 @@ fun Route.getAllBanners(){
             val result = BannerRepo().getAllBanners()
             call.respond(HttpStatusCode.OK,result)
         }catch (e: Throwable){
-            call.respond(e.message.toString())
+            call.respond(HttpStatusCode.InternalServerError,e.message.toString())
         }
     }
 }

@@ -40,10 +40,10 @@ fun Route.deleteCategory(){
                 call.respond(HttpStatusCode.OK,result)
 
             }catch(e: Throwable){
-                call.respond(e.message.toString())
+                call.respond(HttpStatusCode.InternalServerError,e.message.toString())
             }
         }
-        else call.respondText("Invalid Password")
+        else call.respond(HttpStatusCode.Unauthorized,"Invalid Password")
 
     }
 

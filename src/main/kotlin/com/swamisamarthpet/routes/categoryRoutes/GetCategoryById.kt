@@ -21,7 +21,7 @@ fun Route.getCategoryById(){
             call.respond(HttpStatusCode.OK,category!!)
 
         }catch (e: Throwable){
-            call.respondText(e.message.toString())
+            call.respond(HttpStatusCode.InternalServerError,e.message.toString())
         }
 
     }

@@ -14,7 +14,7 @@ fun Route.getAllCategories(){
             val result = CategoryRepo().getAllCategories()
             call.respond(HttpStatusCode.OK, result)
         }catch(e: Throwable){
-            call.respond(e.message.toString())
+            call.respond(HttpStatusCode.InternalServerError,e.message.toString())
         }
 
     }

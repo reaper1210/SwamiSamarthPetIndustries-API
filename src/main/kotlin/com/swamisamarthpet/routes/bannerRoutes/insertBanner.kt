@@ -21,7 +21,7 @@ fun Route.insertBanner(){
                 call.respond(HttpStatusCode.InternalServerError,e.message.toString())
             }
         }
-        else call.respond(HttpStatusCode.InternalServerError,"Invalid Password")
+        else call.respond(HttpStatusCode.Unauthorized,"Invalid Password")
 
     }
 }

@@ -12,12 +12,16 @@ fun Route.downloadAllCategoryImages(){
 
     get("$API_VERSION/downloadAllCategoryImages"){
 
-        val categoryList = CategoryRepo().getAllCategories()
-        val categoryImages = HashMap<String,String>()
-        for(category in categoryList){
-            categoryImages[category.categoryName] = category.categoryImage
+        try{
+            val categoryList = CategoryRepo().getAllCategories()
+            val categoryImages = HashMap<String,String>()
+            for(category in categoryList){
+                categoryImages[category.categoryName] = category.categoryImage
+            }
+            call.respond(HttpStatusCode.OK,categoryImages)
+        }catch(e: Exception){
+            call.respond(HttpStatusCode.InternalServerError,e.message.toString())
         }
-        call.respond(HttpStatusCode.OK,categoryImages)
 
     }
 

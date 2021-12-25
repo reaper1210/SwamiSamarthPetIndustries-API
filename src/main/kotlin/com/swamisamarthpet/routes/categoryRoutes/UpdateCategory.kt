@@ -23,10 +23,10 @@ fun Route.updateCategory(){
                 val result = CategoryRepo().updateCategory(categoryId.toInt(),categoryImage)
                 call.respond(HttpStatusCode.OK,result)
             } catch(e: Throwable){
-                call.respondText(e.message.toString())
+                call.respond(HttpStatusCode.InternalServerError,e.message.toString())
             }
         }
-        else call.respondText("Invalid Password")
+        else call.respond(HttpStatusCode.Unauthorized,"Invalid Password")
 
 
     }

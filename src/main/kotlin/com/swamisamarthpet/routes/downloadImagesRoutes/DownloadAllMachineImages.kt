@@ -11,18 +11,24 @@ import java.io.File
 
 fun Route.downloadAllMachineImages(){
 
-    get("$API_VERSION/downloadAllMachineImages"){
+    get("$API_VERSION/downloadAllMachineImages") {
 
-        val categoryList = CategoryRepo().getAllCategories()
-        val machineImages = HashMap<String,String>()
-        for(category in categoryList){
-            val machineList = MachineRepo(category.categoryName).getAllMachines()
-            for(machineInfo in machineList){
-                val machine = MachineRepo(category.categoryName).getMachineById(machineInfo["machineId"]?.toInt()!!)!!
-                machineImages[machine.machineName] = machine.machineImages
+        try {
+
+            val categoryList = CategoryRepo().getAllCategories()
+            val machineImages = HashMap<String, String>()
+            for (category in categoryList) {
+                val machineList = MachineRepo(category.categoryName).getAllMachines()
+                for (machineInfo in machineList) {
+                    val machine =
+                        MachineRepo(category.categoryName).getMachineById(machineInfo["machineId"]?.toInt()!!)!!
+                    machineImages[machine.machineName] = machine.machineImages
+                }
             }
+            call.respond(HttpStatusCode.OK, machineImages)
+        }catch(e:Exception) {
+            call.respond(HttpStatusCode.InternalServerError, e.message.toString())
         }
-        call.respond(HttpStatusCode.OK,machineImages)
 
     }
 

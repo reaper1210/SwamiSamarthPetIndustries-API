@@ -187,7 +187,7 @@ class MachineRepo(tableName: String): MachineDao {
         return machineHashMap
     }
 
-    private fun rowToMachine(row: ResultRow?): Machine? {
+    fun rowToMachine(row: ResultRow?): Machine? {
         if(row == null)
             return null
 

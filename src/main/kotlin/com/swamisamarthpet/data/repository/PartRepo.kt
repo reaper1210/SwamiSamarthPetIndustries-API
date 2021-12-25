@@ -162,7 +162,7 @@ class PartRepo(tableName: String): PartDao {
         return partHashMap
     }
 
-    private fun rowToPart(row: ResultRow?): Part? {
+    fun rowToPart(row: ResultRow?): Part? {
         if(row == null)
             return null
 

@@ -18,68 +18,64 @@ class PartRepo(tableName: String): PartDao {
 
     private val partTable = PartTable(tableName)
 
-    override suspend fun insertPart(partName: String, multiPart: MultiPartData, partDetails: String, machineName: String): Int =
-        try{
-            var i = 1
-            val array = arrayListOf<String>()
-            val imagePartArray = arrayListOf<PartData>()
-            val partImages = arrayListOf<String>()
-            multiPart.forEachPart {
-                if(it is PartData.FileItem) {
-                    array.add(machineName+partName+i)
-                    imagePartArray.add(it)
-                    i++
-                }
-            }
-
-            i = 0
-            for(part in imagePartArray){
-                if(part is PartData.FileItem) {
-                    val name = array[i]
-                    val file = File("./build/resources/main/static/$name.png")
-                    part.streamProvider().use { its ->
-                        file.outputStream().buffered().use {
-                            its.copyTo(it)
-                        }
-                        //adminAppCode
-                        val compressor = Deflater()
-                        compressor.setLevel(Deflater.BEST_COMPRESSION)
-                        compressor.setInput(file.readBytes())
-                        compressor.finish()
-                        val bos = ByteArrayOutputStream(file.readBytes().size)
-                        val buf = ByteArray(1024)
-                        while (!compressor.finished()) {
-                            val count = compressor.deflate(buf)
-                            bos.write(buf, 0, count)
-                        }
-                        bos.close()
-                        partImages.add(bos.toByteArray().contentToString())
-                    }
-                    if(i==imagePartArray.lastIndex){
-                        DatabaseFactory.dbQuery {
-                            partTable.insert { part ->
-                                part[partTable.partName] = partName
-                                part[partTable.partImages] = partImages.joinToString(";")
-                                part[partTable.partDetails] = partDetails
-                            }
-                        }
-                    }
-                }
+    override suspend fun insertPart(partName: String, multiPart: MultiPartData, partDetails: String, machineName: String): Int {
+        var i = 1
+        val array = arrayListOf<String>()
+        val imagePartArray = arrayListOf<PartData>()
+        val partImages = arrayListOf<String>()
+        multiPart.forEachPart {
+            if(it is PartData.FileItem) {
+                array.add(machineName+partName+i)
+                imagePartArray.add(it)
                 i++
-                part.dispose()
             }
-            1
-        }catch (e: Throwable){
-            0
         }
+
+        i = 0
+        for(part in imagePartArray){
+            if(part is PartData.FileItem) {
+                val name = array[i]
+                val file = File("./build/resources/main/static/$name.png")
+                part.streamProvider().use { its ->
+                    file.outputStream().buffered().use {
+                        its.copyTo(it)
+                    }
+                    //adminAppCode
+                    val compressor = Deflater()
+                    compressor.setLevel(Deflater.BEST_COMPRESSION)
+                    compressor.setInput(file.readBytes())
+                    compressor.finish()
+                    val bos = ByteArrayOutputStream(file.readBytes().size)
+                    val buf = ByteArray(1024)
+                    while (!compressor.finished()) {
+                        val count = compressor.deflate(buf)
+                        bos.write(buf, 0, count)
+                    }
+                    bos.close()
+                    partImages.add(bos.toByteArray().contentToString())
+                }
+                if(i==imagePartArray.lastIndex){
+                    DatabaseFactory.dbQuery {
+                        partTable.insert { part ->
+                            part[partTable.partName] = partName
+                            part[partTable.partImages] = partImages.joinToString(";")
+                            part[partTable.partDetails] = partDetails
+                        }
+                    }
+                }
+            }
+            i++
+            part.dispose()
+        }
+        return 1
+    }
 
     override suspend fun deletePart(partId: Int): Int =
         DatabaseFactory.dbQuery {
             partTable.deleteWhere { partTable.partId.eq(partId) }
         }
 
-    override suspend fun updatePart(partId: Int, multiPart: MultiPartData, partDetails: String, machineName: String): Int =
-        try{
+    override suspend fun updatePart(partId: Int, multiPart: MultiPartData, partDetails: String, machineName: String): Int{
             val partName = getPartById(partId)?.partName
             var i = 1
             val array = arrayListOf<String>()
@@ -130,9 +126,7 @@ class PartRepo(tableName: String): PartDao {
                 part.dispose()
             }
 
-            1
-        }catch (e: Throwable){
-            0
+            return 1
         }
 
     override suspend fun getPartById(partId: Int): Part? =

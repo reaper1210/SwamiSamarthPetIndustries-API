@@ -24,11 +24,12 @@ fun Route.insertMachine(){
         val machineName = parameters["machineName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Name")
         val machineDetails = parameters["machineDetails"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Details")
         val categoryName = parameters["categoryName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Category Name")
+        val youtubeVideoLink = parameters["youtubeVideoLink"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Youtube Video Link")
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
             try{
-                val result = MachineRepo(categoryName).insertMachine(machineName,multiPart,machineDetails)
+                val result = MachineRepo(categoryName).insertMachine(machineName,multiPart,machineDetails,youtubeVideoLink)
                 call.respond(HttpStatusCode.OK,result)
             }catch (e:Throwable){
                 call.respond(HttpStatusCode.InternalServerError, e.message.toString())

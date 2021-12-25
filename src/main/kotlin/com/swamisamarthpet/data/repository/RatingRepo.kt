@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 
 class RatingRepo: RatingDao {
-    override suspend fun insertRatings(rating: Int): Int = try {
+    override suspend fun insertRatings(rating: Int): Int {
         val allRatings = RatingRepo().getRatings()
         DatabaseFactory.dbQuery {
             when(rating){
@@ -43,10 +43,7 @@ class RatingRepo: RatingDao {
                 }
             }
         }
-        rating
-    }catch (e:Exception){
-        e.printStackTrace()
-        0
+        return rating
     }
 
     override suspend fun getRatings(): Rating {

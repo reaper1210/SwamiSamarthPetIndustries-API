@@ -8,7 +8,8 @@ interface MachineDao {
     suspend fun insertMachine(
         machineName: String,
         multiPart: MultiPartData,
-        machineDetails: String
+        machineDetails: String,
+        youtubeVideoLink: String
     ): Int
 
     suspend fun deleteMachine(
@@ -18,7 +19,8 @@ interface MachineDao {
     suspend fun updateMachine(
         machineId: Int,
         multiPart: MultiPartData,
-        machineDetails: String
+        machineDetails: String,
+        youtubeVideoLink: String
     ): Int
 
     suspend fun getMachineById(

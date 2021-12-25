@@ -17,7 +17,7 @@ import java.util.*
 
 class SupportRepo: SupportDao {
 
-    override suspend fun createUser(userName: String, phoneNumber: String): String = try{
+    override suspend fun createUser(userName: String, phoneNumber: String): String {
         val userId = UUID.randomUUID().toString()
         DatabaseFactory.dbQuery {
             RegisteredUsersTable.insert {user->
@@ -26,22 +26,24 @@ class SupportRepo: SupportDao {
                 user[RegisteredUsersTable.phoneNumber] = phoneNumber
             }
         }
-        userId
-    }catch (e: Exception){
-        getUserByPhoneNumber(phoneNumber)
+        return userId
     }
 
-    override suspend fun getAllUsers(): List<User> = DatabaseFactory.dbQuery {
-        RegisteredUsersTable.selectAll().mapNotNull {
-            rowToCategoryUser(it)
+    override suspend fun getAllUsers(): List<User> {
+        return DatabaseFactory.dbQuery {
+            RegisteredUsersTable.selectAll().mapNotNull {
+                rowToCategoryUser(it)
+            }
         }
     }
 
-    override suspend fun getUserByPhoneNumber(phoneNumber: String): String = DatabaseFactory.dbQuery {
-        val result = RegisteredUsersTable.select{ RegisteredUsersTable.phoneNumber eq phoneNumber }.mapNotNull {
-            rowToCategoryUser(it)
+    override suspend fun getUserByPhoneNumber(phoneNumber: String): String {
+        return DatabaseFactory.dbQuery {
+            val result = RegisteredUsersTable.select { RegisteredUsersTable.phoneNumber eq phoneNumber }.mapNotNull {
+                rowToCategoryUser(it)
+            }
+            result[0].userId
         }
-        result[0].userId
     }
 
     private fun rowToCategoryUser(row: ResultRow?): User? {

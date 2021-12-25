@@ -31,10 +31,10 @@ fun Route.insertMachine(){
                 val result = MachineRepo(categoryName).insertMachine(machineName,multiPart,machineDetails)
                 call.respond(HttpStatusCode.OK,result)
             }catch (e:Throwable){
-                call.respondText(e.message.toString())
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
             }
         }
-        else call.respondText("Invalid Password")
+        else call.respond(HttpStatusCode.Unauthorized,"Invalid Password")
 
     }
 

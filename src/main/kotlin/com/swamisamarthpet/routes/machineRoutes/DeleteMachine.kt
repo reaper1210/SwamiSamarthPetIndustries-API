@@ -38,10 +38,10 @@ fun Route.deleteMachine(){
                 call.respond(HttpStatusCode.OK,result)
 
             }catch (e: Throwable){
-                call.respond(e.message.toString())
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
             }
         }
-        else call.respondText("Invalid password")
+        else call.respond(HttpStatusCode.Unauthorized,"Invalid password")
 
     }
 

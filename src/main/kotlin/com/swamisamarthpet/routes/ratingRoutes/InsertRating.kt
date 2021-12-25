@@ -17,7 +17,7 @@ fun Route.insertRating(){
                 val result = RatingRepo().insertRatings(rating)
                 call.respond(HttpStatusCode.OK,result)
             }catch (e: Throwable){
-                call.respond(e.message.toString())
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
             }
         }
     }

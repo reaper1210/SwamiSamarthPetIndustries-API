@@ -13,7 +13,7 @@ import java.util.zip.Deflater
 
 class PopularRepo:PopularDao {
 
-    override suspend fun insertPopularProduct(productName: String, multiPart: MultiPartData, productDetails: String, productType: String, productPopularity: Int): Int {
+    override suspend fun insertPopularProduct(productName: String, multiPart: MultiPartData, productDetails: String, productType: String, productPopularity: Int, productYoutubeVideo: String): Int {
         var productPdf = ""
         val productImages = arrayListOf<String>()
         val multiPartList = arrayListOf<PartData>()
@@ -74,6 +74,7 @@ class PopularRepo:PopularDao {
                             product[PopularProductsTable.productPdf] = productPdf
                             product[PopularProductsTable.productPopularity] = productPopularity
                             product[PopularProductsTable.productType] = productType
+                            product[PopularProductsTable.productYoutubeVideo] = productYoutubeVideo
                         }
                     }
                 }
@@ -89,7 +90,7 @@ class PopularRepo:PopularDao {
         }
     }
 
-    override suspend fun updatePopularProduct(productId: Int, multiPart: MultiPartData, productDetails: String, productPopularity: Int): Int {
+    override suspend fun updatePopularProduct(productId: Int, multiPart: MultiPartData, productDetails: String, productPopularity: Int, productYoutubeVideo: String): Int {
         val productName = getPopularProductById(productId).productName
         var productPdf = ""
         val machineImages = arrayListOf<String>()
@@ -144,6 +145,7 @@ class PopularRepo:PopularDao {
                             statement[PopularProductsTable.productDetails] = productDetails
                             statement[PopularProductsTable.productPdf] = productPdf
                             statement[PopularProductsTable.productPopularity] = productPopularity
+                            statement[PopularProductsTable.productYoutubeVideo] = productYoutubeVideo
                         }
                     }
                 }
@@ -197,7 +199,8 @@ class PopularRepo:PopularDao {
             productDetails = row[PopularProductsTable.productDetails],
             productPdf = row[PopularProductsTable.productPdf],
             productType= row[PopularProductsTable.productType],
-            productPopularity = row[PopularProductsTable.productPopularity]
+            productPopularity = row[PopularProductsTable.productPopularity],
+            productYoutubeVideo = row[PopularProductsTable.productYoutubeVideo]
         )
 
     }

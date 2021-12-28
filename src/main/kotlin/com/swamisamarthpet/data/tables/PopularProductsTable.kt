@@ -12,6 +12,7 @@ object PopularProductsTable: Table(){
     val productPdf: Column<String> = varchar("productPdf",10485760)
     val productType: Column<String> = varchar("productType",10)
     val productPopularity: Column<Int> = integer("productPopularity")
+    val productYoutubeVideo: Column<String> = varchar("productYoutubeVideo",10485760)
 
     override val primaryKey: PrimaryKey = PrimaryKey(productId)
 }

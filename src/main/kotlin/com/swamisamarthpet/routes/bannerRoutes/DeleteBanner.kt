@@ -9,14 +9,13 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 fun Route.deleteBanner(){
-    post("$API_VERSION/updateBanner"){
+    post("$API_VERSION/deleteBanner"){
         val parameters = call.receiveParameters()
-        val multiPartData = call.receiveMultipart()
         val bannerId = parameters["bannerId"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing bannerId")
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing password")
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
             try{
-                val result = BannerRepo().updateBanner(bannerId.toInt(),multiPartData)
+                val result = BannerRepo().deleteBanner(bannerId.toInt())
                 call.respond(HttpStatusCode.OK,result)
             }catch (e: Throwable){
                 call.respond(HttpStatusCode.InternalServerError,e.message.toString())

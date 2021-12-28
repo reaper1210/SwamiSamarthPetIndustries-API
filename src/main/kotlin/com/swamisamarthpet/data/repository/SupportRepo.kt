@@ -18,15 +18,20 @@ import java.util.*
 class SupportRepo: SupportDao {
 
     override suspend fun createUser(userName: String, phoneNumber: String): String {
-        val userId = UUID.randomUUID().toString()
-        DatabaseFactory.dbQuery {
-            RegisteredUsersTable.insert {user->
-                user[RegisteredUsersTable.userId] = userId
-                user[RegisteredUsersTable.userName] = userName
-                user[RegisteredUsersTable.phoneNumber] = phoneNumber
+        return try{
+            val userId = UUID.randomUUID().toString()
+            DatabaseFactory.dbQuery {
+                RegisteredUsersTable.insert {user->
+                    user[RegisteredUsersTable.userId] = userId
+                    user[RegisteredUsersTable.userName] = userName
+                    user[RegisteredUsersTable.phoneNumber] = phoneNumber
+                }
             }
+            userId
+        }catch(e: Exception){
+            getUserByPhoneNumber(phoneNumber)
         }
-        return userId
+
     }
 
     override suspend fun getAllUsers(): List<User> {

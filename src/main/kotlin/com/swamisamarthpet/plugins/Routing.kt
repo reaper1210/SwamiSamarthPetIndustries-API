@@ -55,6 +55,8 @@ fun Application.configureRouting() {
 
         createUser()
         getAllUsers()
+        updateLastMessageTime()
+        updateUnreads()
 
         updatePopularProduct()
         insertPopularProduct()

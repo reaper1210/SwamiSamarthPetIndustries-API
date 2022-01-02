@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 data class User(
     val userId: String,
     val userName: String,
-    val phoneNumber: String
+    val phoneNumber: String,
+    val unreadMessages: String,
+    val lastMessageTime: String
 )

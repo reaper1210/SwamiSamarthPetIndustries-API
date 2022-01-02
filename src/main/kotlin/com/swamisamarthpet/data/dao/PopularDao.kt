@@ -10,7 +10,8 @@ interface PopularDao {
         multiPart: MultiPartData,
         productDetails: String,
         productType: String,
-        productPopularity: Int
+        productPopularity: Int,
+        productYoutubeVideo: String
     ): Int
 
     suspend fun deletePopularProduct(
@@ -21,7 +22,8 @@ interface PopularDao {
         productId: Int,
         multiPart: MultiPartData,
         productDetails: String,
-        productPopularity: Int
+        productPopularity: Int,
+        productYoutubeVideo: String
     ): Int
 
     suspend fun getPopularProductById(

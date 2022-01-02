@@ -1,5 +1,6 @@
 package com.swamisamarthpet.data.dao
 
+import com.swamisamarthpet.data.model.Banner
 import io.ktor.http.content.*
 
 interface BannerDao {
@@ -17,6 +18,6 @@ interface BannerDao {
         bannerId: Int
     ): Int
 
-    suspend fun getAllBanners(): List<String>
+    suspend fun getAllBanners(): List<Banner>
 
 }

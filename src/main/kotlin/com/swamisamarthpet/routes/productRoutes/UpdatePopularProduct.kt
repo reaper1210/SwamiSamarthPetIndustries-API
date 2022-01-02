@@ -16,12 +16,13 @@ fun Route.updatePopularProduct(){
         val productId = parameters["productId"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Product Id")
         val productDetails = parameters["productDetails"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Details")
         val productPopularity = parameters["productPopularity"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Popularity")
+        val productYoutubeVideo = parameters["productYoutubeVideo"]?: ""
         val adminPass = parameters["adminPassword"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Password")
 
         if(adminPass==System.getenv("ADMIN_PASSWORD")){
 
             try{
-                val result = PopularRepo().updatePopularProduct(productId.toInt(),multiPartData,productDetails,productPopularity.toInt())
+                val result = PopularRepo().updatePopularProduct(productId.toInt(),multiPartData,productDetails,productPopularity.toInt(),productYoutubeVideo)
                 call.respond(HttpStatusCode.OK,result)
             } catch (e:Throwable){
                 call.respond(HttpStatusCode.InternalServerError, e.message.toString())

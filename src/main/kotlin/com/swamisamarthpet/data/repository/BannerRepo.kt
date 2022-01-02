@@ -99,17 +99,12 @@ class BannerRepo: BannerDao {
         }
     }
 
-    override suspend fun getAllBanners(): List<String> {
-        val bannerList = ArrayList<String>()
-        val rawList = DatabaseFactory.dbQuery{
+    override suspend fun getAllBanners(): List<Banner> {
+        return DatabaseFactory.dbQuery{
             BannersTable.selectAll().mapNotNull {
                 rowToBanner(it)
             }
         }
-        for(rawBanner in rawList){
-            bannerList.add(rawBanner.bannerImage)
-        }
-        return bannerList
     }
 
     private fun rowToBanner(row: ResultRow?): Banner? {

@@ -10,5 +10,6 @@ data class PopularProduct(
     val productDetails: String,
     val productPdf: String?,
     val productType: String,
-    val productPopularity: Int
+    val productPopularity: Int,
+    val productYoutubeVideo: String
 )

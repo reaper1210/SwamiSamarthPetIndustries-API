@@ -46,32 +46,6 @@ class SupportRepo: SupportDao {
         }
     }
 
-    override suspend fun updateUserUnread(userId: String,isUserOrAdmin:String): Int {
-        return try{
-            DatabaseFactory.dbQuery {
-                val userInfo = RegisteredUsersTable.select{RegisteredUsersTable.userId eq userId}.mapNotNull {
-                    rowToCategoryUser(it)
-                }
-                RegisteredUsersTable.update({
-                    RegisteredUsersTable.userId eq userId
-                }){statement->
-                    if(isUserOrAdmin == "user"){
-                        statement[unreadMessages] = (userInfo[0].unreadMessages.toInt()+1).toString()
-                    }
-                    else{
-                        statement[unreadMessages] = "0"
-                    }
-
-                }
-            }
-            1
-        }catch (e:Throwable){
-            0
-        }
-    }
-
-
-
     override suspend fun getUserByPhoneNumber(phoneNumber: String): String {
         return DatabaseFactory.dbQuery {
             val result = RegisteredUsersTable.select { RegisteredUsersTable.phoneNumber eq phoneNumber }.mapNotNull {

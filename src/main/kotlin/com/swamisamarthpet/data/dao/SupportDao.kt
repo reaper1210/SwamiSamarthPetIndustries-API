@@ -15,5 +15,4 @@ interface SupportDao {
 
     suspend fun getAllUsers() : List<User>
     suspend fun updateUserLastMessageTime(userId: String, time: String): Int
-    suspend fun updateUserUnread(userId: String, isUser: String): Int
 }

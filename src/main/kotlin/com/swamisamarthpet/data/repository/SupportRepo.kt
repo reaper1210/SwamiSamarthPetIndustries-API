@@ -59,7 +59,7 @@ class SupportRepo: SupportDao {
                         statement[unreadMessages] = (userInfo[0].unreadMessages.toInt()+1).toString()
                     }
                     else{
-                        statement[unreadMessages] = (userInfo[0].unreadMessages.toInt()-1).toString()
+                        statement[unreadMessages] = "0"
                     }
 
                 }

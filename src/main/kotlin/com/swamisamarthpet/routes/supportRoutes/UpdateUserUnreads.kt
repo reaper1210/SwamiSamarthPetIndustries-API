@@ -12,9 +12,9 @@ fun Route.updateUnreads(){
     post("$API_VERSION/updateUnreads"){
         val parameters = call.receive<Parameters>()
         val userId = parameters["userId"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing User's Name")
-
+        val isUserOrAdmin = parameters["isUserOrAdmin"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing isUser")
         try{
-            val result = SupportRepo().updateUserUnread(userId)
+            val result = SupportRepo().updateUserUnread(userId,isUserOrAdmin)
             call.respond(HttpStatusCode.OK,result)
         }catch (e:Throwable){
             call.respond(HttpStatusCode.InternalServerError,e.message.toString())

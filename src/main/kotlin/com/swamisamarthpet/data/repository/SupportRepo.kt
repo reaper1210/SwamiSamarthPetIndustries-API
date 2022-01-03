@@ -46,7 +46,7 @@ class SupportRepo: SupportDao {
         }
     }
 
-    override suspend fun updateUserUnread(userId: String): Int {
+    override suspend fun updateUserUnread(userId: String,isUserOrAdmin:String): Int {
         return try{
             DatabaseFactory.dbQuery {
                 val userInfo = RegisteredUsersTable.select{RegisteredUsersTable.userId eq userId}.mapNotNull {
@@ -55,7 +55,13 @@ class SupportRepo: SupportDao {
                 RegisteredUsersTable.update({
                     RegisteredUsersTable.userId eq userId
                 }){statement->
-                    statement[unreadMessages] = (userInfo[0].unreadMessages.toInt()+1).toString()
+                    if(isUserOrAdmin == "user"){
+                        statement[unreadMessages] = (userInfo[0].unreadMessages.toInt()+1).toString()
+                    }
+                    else{
+                        statement[unreadMessages] = (userInfo[0].unreadMessages.toInt()-1).toString()
+                    }
+
                 }
             }
             1

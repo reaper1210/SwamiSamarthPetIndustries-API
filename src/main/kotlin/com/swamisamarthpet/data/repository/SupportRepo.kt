@@ -16,7 +16,6 @@ class SupportRepo: SupportDao {
                 user[RegisteredUsersTable.userId] = userId
                 user[RegisteredUsersTable.userName] = userName
                 user[RegisteredUsersTable.phoneNumber] = phoneNumber
-                user[RegisteredUsersTable.unreadMessages] = "0"
                 user[RegisteredUsersTable.lastMessageTime] = "0"
             }
         }
@@ -63,7 +62,6 @@ class SupportRepo: SupportDao {
             userId = row[RegisteredUsersTable.userId],
             userName = row[RegisteredUsersTable.userName],
             phoneNumber = row[RegisteredUsersTable.phoneNumber],
-            unreadMessages = row[RegisteredUsersTable.unreadMessages],
             lastMessageTime = row[RegisteredUsersTable.lastMessageTime]
         )
     }

@@ -44,6 +44,7 @@ class CategoryRepo: CategoryDao {
                             category[categoryImage] = byteArrayString
                         }
                     }
+                    file.delete()
                     return@forEachPart
                 }
             }
@@ -90,6 +91,7 @@ class CategoryRepo: CategoryDao {
                     }
                 }
             }
+            file.delete()
         }
         return 1
     }

@@ -62,18 +62,20 @@ class MachineRepo(tableName: String): MachineDao {
                         machinePdf = bos.toByteArray().contentToString()
                     }
 
-                }
-                if(index==multiPartList.lastIndex){
-                    DatabaseFactory.dbQuery {
-                        machineTable.insert { machine ->
-                            machine[machineTable.machineName] = machineName
-                            machine[machineTable.machineImages] = machineImages.joinToString(";")
-                            machine[machineTable.machineDetails] = machineDetails
-                            machine[machineTable.machinePdf] = machinePdf
-                            machine[machineTable.youtubeVideoLink] = youtubeVideoLink
+                    if(index==multiPartList.lastIndex){
+                        DatabaseFactory.dbQuery {
+                            machineTable.insert { machine ->
+                                machine[machineTable.machineName] = machineName
+                                machine[machineTable.machineImages] = machineImages.joinToString(";")
+                                machine[machineTable.machineDetails] = machineDetails
+                                machine[machineTable.machinePdf] = machinePdf
+                                machine[machineTable.youtubeVideoLink] = youtubeVideoLink
+                            }
                         }
                     }
+                    file.delete()
                 }
+
             }
             part.dispose()
         }
@@ -136,18 +138,19 @@ class MachineRepo(tableName: String): MachineDao {
                         machinePdf = bos.toByteArray().contentToString()
                     }
 
-                }
-                if(index==multiPartList.lastIndex){
-                    DatabaseFactory.dbQuery {
-                        machineTable.update({
-                            machineTable.machineId.eq(machineId)
-                        }){ statement ->
-                            statement[machineTable.machineImages] = machineImages.joinToString(";")
-                            statement[machineTable.machineDetails] = machineDetails
-                            statement[machineTable.machinePdf] = machinePdf
-                            statement[machineTable.youtubeVideoLink] = youtubeVideoLink
+                    if(index==multiPartList.lastIndex){
+                        DatabaseFactory.dbQuery {
+                            machineTable.update({
+                                machineTable.machineId.eq(machineId)
+                            }){ statement ->
+                                statement[machineTable.machineImages] = machineImages.joinToString(";")
+                                statement[machineTable.machineDetails] = machineDetails
+                                statement[machineTable.machinePdf] = machinePdf
+                                statement[machineTable.youtubeVideoLink] = youtubeVideoLink
+                            }
                         }
                     }
+                    file.delete()
                 }
             }
             part.dispose()

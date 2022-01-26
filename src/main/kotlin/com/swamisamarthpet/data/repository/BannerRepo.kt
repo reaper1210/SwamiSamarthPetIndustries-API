@@ -40,11 +40,12 @@ class BannerRepo: BannerDao {
                         file.delete()
                     }
                     image = bos.toByteArray().contentToString()
-                }
-                DatabaseFactory.dbQuery {
-                    BannersTable.insert { banner ->
-                        banner[bannerImage] = image
+                    DatabaseFactory.dbQuery {
+                        BannersTable.insert { banner ->
+                            banner[bannerImage] = image
+                        }
                     }
+                    file.delete()
                 }
             }
             part.dispose()
@@ -79,13 +80,14 @@ class BannerRepo: BannerDao {
                         file.delete()
                     }
                     image = bos.toByteArray().contentToString()
-                }
-                DatabaseFactory.dbQuery {
-                    BannersTable.update({
-                        BannersTable.bannerId.eq(bannerId)
-                    }){ statement->
-                        statement[bannerImage] = image
+                    DatabaseFactory.dbQuery {
+                        BannersTable.update({
+                            BannersTable.bannerId.eq(bannerId)
+                        }){ statement->
+                            statement[bannerImage] = image
+                        }
                     }
+                    file.delete()
                 }
             }
             part.dispose()

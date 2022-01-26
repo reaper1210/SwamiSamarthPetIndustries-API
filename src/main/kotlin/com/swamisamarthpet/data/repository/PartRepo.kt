@@ -53,15 +53,16 @@ class PartRepo(tableName: String): PartDao {
                     }
                     bos.close()
                     partImages.add(bos.toByteArray().contentToString())
-                }
-                if(i==imagePartArray.lastIndex){
-                    DatabaseFactory.dbQuery {
-                        partTable.insert { part ->
-                            part[partTable.partName] = partName
-                            part[partTable.partImages] = partImages.joinToString(";")
-                            part[partTable.partDetails] = partDetails
+                    if(i==imagePartArray.lastIndex){
+                        DatabaseFactory.dbQuery {
+                            partTable.insert { part ->
+                                part[partTable.partName] = partName
+                                part[partTable.partImages] = partImages.joinToString(";")
+                                part[partTable.partDetails] = partDetails
+                            }
                         }
                     }
+                    file.delete()
                 }
             }
             i++
@@ -110,16 +111,17 @@ class PartRepo(tableName: String): PartDao {
                         }
                         bos.close()
                         partImages.add(bos.toByteArray().contentToString())
-                    }
-                    if(i==imagePartArray.lastIndex){
-                        DatabaseFactory.dbQuery {
-                            partTable.update({
-                                partTable.partId.eq(partId)
-                            }){ statement->
-                                statement[partTable.partImages] = partImages.joinToString(";")
-                                statement[partTable.partDetails] = partDetails
+                        if(i==imagePartArray.lastIndex){
+                            DatabaseFactory.dbQuery {
+                                partTable.update({
+                                    partTable.partId.eq(partId)
+                                }){ statement->
+                                    statement[partTable.partImages] = partImages.joinToString(";")
+                                    statement[partTable.partDetails] = partDetails
+                                }
                             }
                         }
+                        file.delete()
                     }
                 }
                 i++

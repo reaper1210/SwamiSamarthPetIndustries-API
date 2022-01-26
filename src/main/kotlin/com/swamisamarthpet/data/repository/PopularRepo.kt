@@ -63,20 +63,20 @@ class PopularRepo:PopularDao {
                     else {
                         productImages.add(bos.toByteArray().contentToString())
                     }
-
-                }
-                if (index == multiPartList.lastIndex) {
-                    DatabaseFactory.dbQuery {
-                        PopularProductsTable.insert { product ->
-                            product[PopularProductsTable.productName] = productName
-                            product[PopularProductsTable.productImages] = productImages.joinToString(";")
-                            product[PopularProductsTable.productDetails] = productDetails
-                            product[PopularProductsTable.productPdf] = productPdf
-                            product[PopularProductsTable.productPopularity] = productPopularity
-                            product[PopularProductsTable.productType] = productType
-                            product[PopularProductsTable.productYoutubeVideo] = productYoutubeVideo
+                    if (index == multiPartList.lastIndex) {
+                        DatabaseFactory.dbQuery {
+                            PopularProductsTable.insert { product ->
+                                product[PopularProductsTable.productName] = productName
+                                product[PopularProductsTable.productImages] = productImages.joinToString(";")
+                                product[PopularProductsTable.productDetails] = productDetails
+                                product[PopularProductsTable.productPdf] = productPdf
+                                product[PopularProductsTable.productPopularity] = productPopularity
+                                product[PopularProductsTable.productType] = productType
+                                product[PopularProductsTable.productYoutubeVideo] = productYoutubeVideo
+                            }
                         }
                     }
+                    file.delete()
                 }
             }
             part.dispose()
@@ -134,20 +134,20 @@ class PopularRepo:PopularDao {
                     else{
                         productPdf = bos.toByteArray().contentToString()
                     }
-
-                }
-                if(index==multiPartList.lastIndex){
-                    DatabaseFactory.dbQuery {
-                        PopularProductsTable.update({
-                            PopularProductsTable.productId.eq(productId)
-                        }){ statement ->
-                            statement[PopularProductsTable.productImages] = machineImages.joinToString(";")
-                            statement[PopularProductsTable.productDetails] = productDetails
-                            statement[PopularProductsTable.productPdf] = productPdf
-                            statement[PopularProductsTable.productPopularity] = productPopularity
-                            statement[PopularProductsTable.productYoutubeVideo] = productYoutubeVideo
+                    if(index==multiPartList.lastIndex){
+                        DatabaseFactory.dbQuery {
+                            PopularProductsTable.update({
+                                PopularProductsTable.productId.eq(productId)
+                            }){ statement ->
+                                statement[PopularProductsTable.productImages] = machineImages.joinToString(";")
+                                statement[PopularProductsTable.productDetails] = productDetails
+                                statement[PopularProductsTable.productPdf] = productPdf
+                                statement[PopularProductsTable.productPopularity] = productPopularity
+                                statement[PopularProductsTable.productYoutubeVideo] = productYoutubeVideo
+                            }
                         }
                     }
+                    file.delete()
                 }
             }
             part.dispose()

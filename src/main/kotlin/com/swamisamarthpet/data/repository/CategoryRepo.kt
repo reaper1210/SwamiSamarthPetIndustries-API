@@ -90,8 +90,8 @@ class CategoryRepo: CategoryDao {
                         statement[AllCategoriesTable.categoryImage] = byteArrayString
                     }
                 }
+                file.delete()
             }
-            file.delete()
         }
         return 1
     }

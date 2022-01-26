@@ -81,13 +81,21 @@ class CategoryRepo: CategoryDao {
                     bos.write(buf, 0, count)
                 }
                 bos.close()
+                var category: Category?
                 val byteArrayString = bos.toByteArray().contentToString()
                 DatabaseFactory.dbQuery {
-                    AllCategoriesTable.update({
+                    AllCategoriesTable.select {
                         AllCategoriesTable.categoryId.eq(categoryId)
-                    }){ statement ->
-                        statement[AllCategoriesTable.categoryImage] = byteArrayString
-                    }
+                    }.map {
+                        category = rowToCategory(it)
+                        AllCategoriesTable.update({
+                            AllCategoriesTable.categoryId.eq(categoryId)
+                        }){ statement ->
+                            statement[AllCategoriesTable.categoryId] = category!!.categoryId
+                            statement[AllCategoriesTable.categoryName] = category!!.categoryName
+                            statement[AllCategoriesTable.categoryImage] = byteArrayString
+                        }
+                    }.singleOrNull()
                 }
             }
         }

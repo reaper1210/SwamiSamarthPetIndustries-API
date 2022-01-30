@@ -63,6 +63,7 @@ class CategoryRepo: CategoryDao {
     }
 
     override suspend fun updateCategory(categoryId: Int, categoryImage: PartData): Int {
+
         val categoryName = getCategoryById(categoryId)?.categoryName
         if(categoryImage is PartData.FileItem) {
             val file = File("./build/resources/main/static/$categoryName.png")
@@ -92,8 +93,11 @@ class CategoryRepo: CategoryDao {
                 }
                 file.delete()
             }
+            return 1
         }
-        return 1
+        else{
+            return 0
+        }
     }
 
     override suspend fun getAllCategories(): List<Category> {

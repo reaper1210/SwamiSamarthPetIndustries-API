@@ -6,10 +6,12 @@ import com.swamisamarthpet.data.model.PopularProduct
 import com.swamisamarthpet.data.tables.PopularProductsTable
 import io.ktor.http.content.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.ArrayList
 import java.util.zip.Deflater
+import kotlin.math.absoluteValue
 
 class PopularRepo:PopularDao {
 
@@ -93,7 +95,15 @@ class PopularRepo:PopularDao {
     override suspend fun updatePopularProduct(productId: Int, multiPart: MultiPartData, productDetails: String, productPopularity: Int, productYoutubeVideo: String): Int {
         val productName = getPopularProductById(productId).productName
         var productPdf = ""
-        val machineImages = arrayListOf<String>()
+        val productType = DatabaseFactory.dbQuery {
+            PopularProductsTable.select { PopularProductsTable.productId eq productId }
+                .limit(1)
+                .single()
+                .let {
+                    rowToPopularProduct(it)?.productType
+                }
+        }
+
         val multiPartList = arrayListOf<PartData>()
         multiPart.forEachPart {
             if(it is PartData.FileItem){
@@ -101,59 +111,103 @@ class PopularRepo:PopularDao {
             }
         }
 
-        multiPartList.forEachIndexed { index, part->
-            if(part is PartData.FileItem) {
-                val file = if(index!=0){
-                    File("./build/resources/main/static/${productName}${index}.png")
-                }
-                else{
-                    File("./build/resources/main/static/${productName}Pdf.pdf")
-                }
-
-                part.streamProvider().use { its ->
-                    file.outputStream().buffered().use {
-                        its.copyTo(it)
-                    }
-
-                    //adminAppCode
-                    val compressor = Deflater()
-                    compressor.setLevel(Deflater.BEST_COMPRESSION)
-                    compressor.setInput(file.readBytes())
-                    compressor.finish()
-                    val bos = ByteArrayOutputStream(file.readBytes().size)
-                    val buf = ByteArray(1024)
-                    while (!compressor.finished()) {
-                        val count = compressor.deflate(buf)
-                        bos.write(buf, 0, count)
-                    }
-                    bos.close()
-
-                    if(index!=0){
-                        machineImages.add(bos.toByteArray().contentToString())
+        if(productType=="machine"){
+            val machineImages = arrayListOf<String>()
+            multiPartList.forEachIndexed { index, part->
+                if(part is PartData.FileItem) {
+                    val file = if(index!=0){
+                        File("./build/resources/main/static/$productName$index.png")
                     }
                     else{
-                        productPdf = bos.toByteArray().contentToString()
+                        File("./build/resources/main/static/${productName}Pdf.pdf")
                     }
-                    if(index==multiPartList.lastIndex){
-                        DatabaseFactory.dbQuery {
-                            PopularProductsTable.update({
-                                PopularProductsTable.productId.eq(productId)
-                            }){ statement ->
-                                statement[PopularProductsTable.productImages] = machineImages.joinToString(";")
-                                statement[PopularProductsTable.productDetails] = productDetails
-                                statement[PopularProductsTable.productPdf] = productPdf
-                                statement[PopularProductsTable.productPopularity] = productPopularity
-                                statement[PopularProductsTable.productYoutubeVideo] = productYoutubeVideo
+
+                    part.streamProvider().use { its ->
+                        file.outputStream().buffered().use {
+                            its.copyTo(it)
+                        }
+
+                        //adminAppCode
+                        val compressor = Deflater()
+                        compressor.setLevel(Deflater.BEST_COMPRESSION)
+                        compressor.setInput(file.readBytes())
+                        compressor.finish()
+                        val bos = ByteArrayOutputStream(file.readBytes().size)
+                        val buf = ByteArray(1024)
+                        while (!compressor.finished()) {
+                            val count = compressor.deflate(buf)
+                            bos.write(buf, 0, count)
+                        }
+                        bos.close()
+
+                        if(index!=0){
+                            machineImages.add(bos.toByteArray().contentToString())
+                        }
+                        else{
+                            productPdf = bos.toByteArray().contentToString()
+                        }
+                        if(index==multiPartList.lastIndex){
+                            DatabaseFactory.dbQuery {
+                                PopularProductsTable.update({
+                                    PopularProductsTable.productId.eq(productId)
+                                }){ statement ->
+                                    statement[PopularProductsTable.productImages] = machineImages.joinToString(";")
+                                    statement[PopularProductsTable.productDetails] = productDetails
+                                    statement[PopularProductsTable.productPdf] = productPdf
+                                    statement[PopularProductsTable.productPopularity] = productPopularity
+                                    statement[PopularProductsTable.productYoutubeVideo] = productYoutubeVideo
+                                }
                             }
                         }
+                        file.delete()
                     }
-                    file.delete()
                 }
+                part.dispose()
             }
-            part.dispose()
+            return 1
+        }
+        else{
+            val partImages = arrayListOf<String>()
+            multiPartList.forEachIndexed { index, part ->
+                if(part is PartData.FileItem){
+                    val file = File("./build/resources/main/static/$productName$index.png")
+                    part.streamProvider().use { its ->
+                        file.outputStream().buffered().use {
+                            its.copyTo(it)
+                        }
+                        //adminAppCode
+                        val compressor = Deflater()
+                        compressor.setLevel(Deflater.BEST_COMPRESSION)
+                        compressor.setInput(file.readBytes())
+                        compressor.finish()
+                        val bos = ByteArrayOutputStream(file.readBytes().size)
+                        val buf = ByteArray(1024)
+                        while (!compressor.finished()) {
+                            val count = compressor.deflate(buf)
+                            bos.write(buf, 0, count)
+                        }
+                        bos.close()
+                        partImages.add(bos.toByteArray().contentToString())
+                        if(index==multiPartList.lastIndex){
+                            DatabaseFactory.dbQuery {
+                                PopularProductsTable.update({
+                                    PopularProductsTable.productId.eq(productId)
+                                }){ statement->
+                                    statement[PopularProductsTable.productImages] = partImages.joinToString(";")
+                                    statement[PopularProductsTable.productDetails] = productDetails
+                                    statement[PopularProductsTable.productPopularity] = productPopularity
+                                }
+                            }
+                        }
+                        file.delete()
+                    }
+                }
+                part.dispose()
+            }
+
+            return 1
         }
 
-        return 1
     }
 
     override suspend fun getPopularProductById(productId: Int): PopularProduct {

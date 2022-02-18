@@ -22,13 +22,13 @@ object DatabaseFactory {
             SchemaUtils.create(BannersTable)
             SchemaUtils.create(RatingsTable)
 //            *** inserting default rating row ***
-            RatingsTable.insert { ratings->
-                ratings[oneStars] = 0
-                ratings[twoStars] = 0
-                ratings[threeStars] = 0
-                ratings[fourStars] = 0
-                ratings[fiveStars] = 0
-            }
+//            RatingsTable.insert { ratings->
+//                ratings[oneStars] = 0
+//                ratings[twoStars] = 0
+//                ratings[threeStars] = 0
+//                ratings[fourStars] = 0
+//                ratings[fiveStars] = 0
+//            }
         }
     }
 

@@ -9,7 +9,7 @@ import java.util.*
 
 class SupportRepo: SupportDao {
 
-    override suspend fun createUser(userName: String, phoneNumber: String,token:String): String {
+    override suspend fun createUser(userName: String, phoneNumber: String, token: String): String = try{
         val userId = UUID.randomUUID().toString()
         DatabaseFactory.dbQuery {
             RegisteredUsersTable.insert {user->
@@ -20,7 +20,9 @@ class SupportRepo: SupportDao {
                 user[RegisteredUsersTable.token] = token
             }
         }
-        return userId
+        userId
+    }catch (e: Exception){
+        getUserByPhoneNumber(phoneNumber)
     }
 
     override suspend fun getAllUsers(): List<User> {

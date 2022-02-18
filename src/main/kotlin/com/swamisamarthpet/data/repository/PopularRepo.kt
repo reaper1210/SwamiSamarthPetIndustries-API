@@ -228,6 +228,7 @@ class PopularRepo:PopularDao {
                 rowToPopularProduct(it)
             }
         }
+        rawList.sortedBy { it.productPopularity }
         for(rawMachine in rawList){
             val imageList = rawMachine.productImages.split(";")
             val machine = HashMap<String,String>()

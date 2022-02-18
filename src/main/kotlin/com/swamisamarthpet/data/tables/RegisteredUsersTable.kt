@@ -8,6 +8,7 @@ object RegisteredUsersTable:Table() {
     val userName: Column<String> = varchar("userName",500)
     val phoneNumber: Column<String> = varchar("phoneNumber",13).uniqueIndex()
     val lastMessageTime: Column<String> = varchar("lastMessageTime",10485760)
+    val token: Column<String> = varchar("token",10485760)
 
     override val primaryKey: PrimaryKey = PrimaryKey(userId)
 }

@@ -9,7 +9,7 @@ import java.util.*
 
 class SupportRepo: SupportDao {
 
-    override suspend fun createUser(userName: String, phoneNumber: String): String {
+    override suspend fun createUser(userName: String, phoneNumber: String,token:String): String {
         val userId = UUID.randomUUID().toString()
         DatabaseFactory.dbQuery {
             RegisteredUsersTable.insert {user->
@@ -17,6 +17,7 @@ class SupportRepo: SupportDao {
                 user[RegisteredUsersTable.userName] = userName
                 user[RegisteredUsersTable.phoneNumber] = phoneNumber
                 user[RegisteredUsersTable.lastMessageTime] = "0"
+                user[RegisteredUsersTable.token] = token
             }
         }
         return userId
@@ -62,7 +63,8 @@ class SupportRepo: SupportDao {
             userId = row[RegisteredUsersTable.userId],
             userName = row[RegisteredUsersTable.userName],
             phoneNumber = row[RegisteredUsersTable.phoneNumber],
-            lastMessageTime = row[RegisteredUsersTable.lastMessageTime]
+            lastMessageTime = row[RegisteredUsersTable.lastMessageTime],
+            token = row[RegisteredUsersTable.token]
         )
     }
 

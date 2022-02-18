@@ -14,9 +14,9 @@ fun Route.createUser(){
         val parameters = call.receive<Parameters>()
         val userName = parameters["userName"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing User's Name")
         val phoneNumber = parameters["phoneNumber"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Phone Number")
-
+        val token = parameters["token"]?: return@post call.respond(HttpStatusCode.Unauthorized,"Missing Token")
         try{
-            val result = SupportRepo().createUser(userName,phoneNumber)
+            val result = SupportRepo().createUser(userName,phoneNumber,token)
             call.respond(HttpStatusCode.OK,result)
         }catch (e:Throwable){
             call.respond(HttpStatusCode.InternalServerError,e.message.toString())

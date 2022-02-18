@@ -22,6 +22,13 @@ class SupportRepo: SupportDao {
         }
         userId
     }catch (e: Exception){
+        DatabaseFactory.dbQuery {
+            RegisteredUsersTable.update({
+                RegisteredUsersTable.phoneNumber eq phoneNumber
+            }){ statement ->
+                statement[RegisteredUsersTable.token] = token
+            }
+        }
         getUserByPhoneNumber(phoneNumber)
     }
 
